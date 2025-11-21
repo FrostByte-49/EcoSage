@@ -11,15 +11,20 @@ function App() {
     setCurrentPage(page as 'home' | 'scan' | 'upload' | 'about');
   };
 
+  const pageProps = {
+    onNavigate: handleNavigate,
+    currentPage
+  };
+
   switch (currentPage) {
     case 'scan':
-      return <ScanPage onNavigate={handleNavigate} />;
+      return <ScanPage {...pageProps} />;
     case 'upload':
-      return <UploadPage onNavigate={handleNavigate} />;
+      return <UploadPage {...pageProps} />;
     case 'about':
-      return <AboutPage onNavigate={handleNavigate} />;
+      return <AboutPage {...pageProps} />;
     default:
-      return <HomePage onNavigate={handleNavigate} />;
+      return <HomePage {...pageProps} />;
   }
 }
 
