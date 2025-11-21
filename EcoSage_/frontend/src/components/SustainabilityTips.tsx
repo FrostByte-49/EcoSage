@@ -60,7 +60,7 @@ const SustainabilityTips: React.FC = () => {
             {currentTip.category}
           </span>
         </div>
-        <h4 className="text-white font-medium text-sm">{currentTip.title}</h4>
+        <h4 className="text-white font-medium text-sm capitalize">{currentTip.title}</h4>
         <p className="text-gray-300 text-sm leading-relaxed">
           {currentTip.description}
         </p>
