@@ -3,6 +3,9 @@ import { Scan, Upload, Zap, TrendingUp, Shield } from 'lucide-react';
 import StarsBackground from '../components/StarsBackground';
 import Header from '../components/Header';
 import BottomNav from '../components/BottomNav';
+import RecentScans from '../components/RecentScans';
+import SustainabilityTips from '../components/SustainabilityTips';
+import EcoFacts from '../components/EcoFacts';
 
 interface HomePageProps {
   onNavigate: (page: string) => void;
@@ -44,7 +47,6 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, currentPage }) => {
         {/* Enhanced Hero Section */}
         <section className="px-6 py-12">
           <div className="max-w-md mx-auto text-center">
-            {/* App Icon */}
             <div className="w-20 h-20 bg-gradient-to-br from-white to-gray-200 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
               <Scan className="w-10 h-10 text-black" />
             </div>
@@ -67,7 +69,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, currentPage }) => {
         </section>
 
         {/* Feature Cards - 2 in a row */}
-        <section className="px-6 mb-8">
+        <section className="px-6 mb-6">
           <div className="max-w-md mx-auto">
             <h2 className="text-xl font-semibold text-white mb-6 text-center">Get Started</h2>
             <div className="grid grid-cols-2 gap-4">
@@ -95,8 +97,31 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, currentPage }) => {
           </div>
         </section>
 
+        {/* NEW: Recent Scans Section */}
+        <section className="px-6 mb-6">
+          <div className="max-w-md mx-auto">
+            <RecentScans 
+              onScanClick={(scan) => console.log('Scan clicked:', scan)}
+            />
+          </div>
+        </section>
+
+        {/* NEW: Sustainability Tips Carousel */}
+        <section className="px-6 mb-6">
+          <div className="max-w-md mx-auto">
+            <SustainabilityTips />
+          </div>
+        </section>
+
+        {/* NEW: Eco Facts Section */}
+        <section className="px-6 mb-6">
+          <div className="max-w-md mx-auto">
+            <EcoFacts />
+          </div>
+        </section>
+
         {/* Stats Section */}
-        <section className="px-6 mb-8">
+        <section className="px-6 mb-6">
           <div className="max-w-md mx-auto">
             <div className="bg-gray-900/80 backdrop-blur-lg rounded-2xl border border-gray-800 p-6">
               <div className="grid grid-cols-3 gap-6 text-center">

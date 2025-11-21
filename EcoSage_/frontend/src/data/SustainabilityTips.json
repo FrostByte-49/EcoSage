@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1",
+    "title": "Choose Glass Over Plastic",
+    "description": "Glass containers can be recycled infinitely without quality loss, unlike plastic which degrades and often ends up in landfills.",
+    "category": "Packaging"
+  },
+  {
+    "id": "2", 
+    "title": "Look for Recycled Content",
+    "description": "Products with recycled materials reduce the need for virgin resources and save significant energy in manufacturing processes.",
+    "category": "Materials"
+  },
+  {
+    "id": "3",
+    "title": "Support Local Brands",
+    "description": "Local products have lower transportation emissions and often have better transparency in their sustainability practices.",
+    "category": "Transportation"
+  },
+  {
+    "id": "4",
+    "title": "Avoid Single-Use Plastics",
+    "description": "Bring your own reusable bags, bottles, and containers to significantly reduce plastic waste in your daily life.",
+    "category": "Lifestyle"
+  },
+  {
+    "id": "5",
+    "title": "Check Product Certifications",
+    "description": "Look for certifications like Fair Trade, Organic, or B Corp that indicate better environmental and social practices.",
+    "category": "Certifications"
+  }
+]
