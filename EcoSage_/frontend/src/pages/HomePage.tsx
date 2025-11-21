@@ -1,5 +1,5 @@
 import React from 'react';
-import { Scan, Upload, Zap, TrendingUp, Shield } from 'lucide-react';
+import { Scan, Upload, Zap, TrendingUp, Shield, Sparkles } from 'lucide-react';
 import StarsBackground from '../components/StarsBackground';
 import Header from '../components/Header';
 import BottomNav from '../components/BottomNav';
@@ -45,33 +45,45 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, currentPage }) => {
         <Header />
         
         {/* Enhanced Hero Section */}
-        <section className="px-6 py-12">
+        <section className="px-6 pt-12">
           <div className="max-w-md mx-auto text-center">
-            <div className="w-20 h-20 bg-gradient-to-br from-white to-gray-200 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-              <Scan className="w-10 h-10 text-black" />
+
+            <div className="inline-flex items-center gap-2 mb-9 px-5 py-2 bg-white/10 backdrop-blur-lg rounded-full border border-white/20 shadow-lg mb-5">
+              <Sparkles className="w-4 h-4 text-gray-300" />
+              <span className="text-sm font-medium text-gray-200 tracking-wide">
+                ようこそ • Welcome
+              </span>
             </div>
-            
-            {/* Main Title */}
-            <h1 className="text-4xl font-bold text-white mb-4">
-              EcoSage
-            </h1>
-            
-            {/* Tagline */}
-            <p className="text-gray-300 text-lg mb-3">
-              Sustainability Made Simple
-            </p>
-            
+
+            {/* Logo & Title */}
+            <div className="flex items-center justify-center space-x-4 mb-6">
+              <div className="w-14 h-14 bg-gradient-to-br from-white to-gray-200 rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0">
+                <Scan className="w-8 h-8 text-black" />
+              </div>
+              <h1 className="text-4xl font-bold text-white">
+                EcoSage
+              </h1>
+            </div>
+
             {/* Description */}
-            <p className="text-gray-400 text-sm leading-relaxed max-w-xs mx-auto">
-              Scan any product to instantly discover its environmental impact and make eco-friendly choices
+            <p className="text-gray-400 text-md leading-relaxed max-w-xs mx-auto capitalize">
+              Your AI-powered companion for making eco-friendly choices
             </p>
+
+            {/* Line Animation */}
+            <div className="flex justify-center items-center gap-4 m-8">
+              <div className="h-1 w-28 bg-gradient-to-r from-white/40 to-white/20 rounded-full" />
+              <span className="text-xl text-white font-light">✦</span>
+              <div className="h-1 w-28 bg-gradient-to-r from-white/20 to-white/40 rounded-full" />
+            </div>
+
           </div>
         </section>
 
-        {/* Feature Cards - 2 in a row */}
+        {/* Feature Cards */}
         <section className="px-6 mb-6">
           <div className="max-w-md mx-auto">
-            <h2 className="text-xl font-semibold text-white mb-6 text-center">Get Started</h2>
+            <h2 className="text-2xl font-bold text-white mb-6 text-center">Get Started</h2>
             <div className="grid grid-cols-2 gap-4">
               {features.map((feature, index) => {
                 const Icon = feature.icon;
@@ -97,6 +109,28 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, currentPage }) => {
           </div>
         </section>
 
+        {/* Stats Section */}
+        <section className="px-6 mb-6">
+          <div className="max-w-md mx-auto">
+            <div className="bg-gray-900/80 backdrop-blur-lg rounded-2xl border border-gray-800 p-6">
+              <div className="grid grid-cols-3 gap-6 text-center">
+                {stats.map((stat, index) => {
+                  const Icon = stat.icon;
+                  return (
+                    <div key={index} className="group">
+                      <div className="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-gray-700 transition-colors">
+                        <Icon className="w-6 h-6 text-white" />
+                      </div>
+                      <div className="text-lg font-bold text-white mb-1">{stat.value}</div>
+                      <div className="text-gray-400 text-xs">{stat.label}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* NEW: Recent Scans Section */}
         <section className="px-6 mb-6">
           <div className="max-w-md mx-auto">
@@ -117,28 +151,6 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, currentPage }) => {
         <section className="px-6 mb-6">
           <div className="max-w-md mx-auto">
             <EcoFacts />
-          </div>
-        </section>
-
-        {/* Stats Section */}
-        <section className="px-6 mb-6">
-          <div className="max-w-md mx-auto">
-            <div className="bg-gray-900/80 backdrop-blur-lg rounded-2xl border border-gray-800 p-6">
-              <div className="grid grid-cols-3 gap-6 text-center">
-                {stats.map((stat, index) => {
-                  const Icon = stat.icon;
-                  return (
-                    <div key={index} className="group">
-                      <div className="w-12 h-12 bg-gray-800 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:bg-gray-700 transition-colors">
-                        <Icon className="w-6 h-6 text-white" />
-                      </div>
-                      <div className="text-lg font-bold text-white mb-1">{stat.value}</div>
-                      <div className="text-gray-400 text-xs">{stat.label}</div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
           </div>
         </section>
 
