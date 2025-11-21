@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1",
+    "fact": "Recycling one aluminum can saves enough energy to run a TV for 3 hours",
+    "source": "Environmental Protection Agency"
+  },
+  {
+    "id": "2",
+    "fact": "It takes 450 years for a plastic bottle to decompose in the ocean",
+    "source": "Ocean Conservancy"
+  },
+  {
+    "id": "3", 
+    "fact": "If every American recycled one plastic bottle, it would save enough energy to power 1.5 million homes",
+    "source": "National Geographic"
+  },
+  {
+    "id": "4",
+    "fact": "Glass is 100% recyclable and can be reused endlessly without loss in quality",
+    "source": "Glass Packaging Institute"
+  },
+  {
+    "id": "5",
+    "fact": "The average person generates 4.5 pounds of trash per day - twice as much as 50 years ago",
+    "source": "EPA Statistics"
+  },
+  {
+    "id": "6", 
+    "fact": "Producing new plastic from recycled material uses 75% less energy than making it from raw materials",
+    "source": "Stanford University"
+  }
+]
