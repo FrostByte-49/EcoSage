@@ -9,7 +9,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ title, showBack = false, onBack }) => {
   return (
-    <header className="relative z-20 px-4 py-4 border-b border-gray-800 bg-black/80 backdrop-blur-lg">
+    <header className="relative z-20 px-4 py-4 border-b border-gray-400 bg-black/80 backdrop-blur-lg">
       <div className="max-w-md mx-auto flex items-center justify-between">
         <div className="flex items-center space-x-3">
           {showBack && (

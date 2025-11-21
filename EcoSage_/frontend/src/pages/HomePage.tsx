@@ -1,5 +1,5 @@
 import React from 'react';
-import { Scan, Upload, Zap, TrendingUp, Shield, Sparkles } from 'lucide-react';
+import { Scan, Upload, Zap, TrendingUp, Shield, Sparkles, Workflow } from 'lucide-react';
 import StarsBackground from '../components/StarsBackground';
 import Header from '../components/Header';
 import BottomNav from '../components/BottomNav';
@@ -155,27 +155,34 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, currentPage }) => {
         </section>
 
         {/* How It Works Section */}
-        <section className="px-6">
-          <div className="max-w-md mx-auto">
-            <div className="bg-gray-900/60 backdrop-blur-lg rounded-2xl border border-gray-800 p-6">
-              <h3 className="text-white font-semibold mb-3 text-center">How It Works</h3>
-              <div className="space-y-3">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-white text-black rounded-full flex items-center justify-center text-sm font-bold">1</div>
-                  <p className="text-gray-300 text-sm">Scan or upload product image</p>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-white text-black rounded-full flex items-center justify-center text-sm font-bold">2</div>
-                  <p className="text-gray-300 text-sm">AI analyzes sustainability factors</p>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-white text-black rounded-full flex items-center justify-center text-sm font-bold">3</div>
-                  <p className="text-gray-300 text-sm">Get instant eco-friendly insights</p>
-                </div>
+       <section className="px-6 pb-6">
+        <div className="max-w-md mx-auto">
+          <div className="bg-gray-900/60 backdrop-blur-lg rounded-2xl border border-gray-800 p-6">
+
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center">
+                <Workflow className="w-5 h-5 text-yellow-400 mr-2" />
+                <h3 className="text-white font-bold">How It Works?</h3>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-white text-black rounded-full flex items-center justify-center text-sm font-bold">1</div>
+                <p className="text-gray-300 text-sm">Scan or upload product image</p>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-white text-black rounded-full flex items-center justify-center text-sm font-bold">2</div>
+                <p className="text-gray-300 text-sm">AI analyzes sustainability factors</p>
+              </div>
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-white text-black rounded-full flex items-center justify-center text-sm font-bold">3</div>
+                <p className="text-gray-300 text-sm">Get instant eco-friendly insights</p>
               </div>
             </div>
           </div>
-        </section>
+        </div>
+       </section>
       </div>
 
       {/* Bottom Navigation */}
