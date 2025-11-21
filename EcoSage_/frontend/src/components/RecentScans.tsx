@@ -1,4 +1,5 @@
 import React from 'react';
+import { History } from 'lucide-react';
 import recentScansData from '../data/RecentScans.json';
 
 interface RecentScansProps {
@@ -15,7 +16,10 @@ const RecentScans: React.FC<RecentScansProps> = ({ onScanClick }) => {
   return (
     <div className="bg-gray-900/80 backdrop-blur-lg rounded-2xl border border-gray-800 p-6">
       <h3 className="text-white font-semibold mb-4 flex items-center justify-between">
-        <span>Recent Scans</span>
+        <div className="flex items-center">
+          <History className="w-5 h-5 text-yellow-400 mr-2" />
+          <span>Recent Scans</span>
+        </div>
         <span className="text-gray-400 text-sm font-normal">{recentScansData.length} items</span>
       </h3>
       
