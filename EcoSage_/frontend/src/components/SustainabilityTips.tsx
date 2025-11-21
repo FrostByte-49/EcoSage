@@ -36,7 +36,7 @@ const SustainabilityTips: React.FC = () => {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center">
           <NotepadTextIcon className="w-5 h-5 text-yellow-400 mr-2" />
-          <h3 className="text-white font-semibold">Sustainability Tips</h3>
+          <h3 className="text-white font-bold">Sustainability Tips</h3>
         </div>
         <button
           onClick={getNewRandomTip}

@@ -15,7 +15,7 @@ const RecentScans: React.FC<RecentScansProps> = ({ onScanClick }) => {
 
   return (
     <div className="bg-gray-900/80 backdrop-blur-lg rounded-2xl border border-gray-800 p-6">
-      <h3 className="text-white font-semibold mb-4 flex items-center justify-between">
+      <h3 className="text-white font-bold mb-4 flex items-center justify-between">
         <div className="flex items-center">
           <History className="w-5 h-5 text-yellow-400 mr-2" />
           <span>Recent Scans</span>

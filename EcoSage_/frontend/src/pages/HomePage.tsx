@@ -99,7 +99,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, currentPage }) => {
                     <h3 className="text-white font-semibold text-center mb-2 text-sm">
                       {feature.title}
                     </h3>
-                    <p className="text-gray-400 text-xs text-center leading-tight">
+                    <p className="text-gray-400 text-xs text-center leading-tight capitalize">
                       {feature.description}
                     </p>
                   </div>
@@ -131,7 +131,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, currentPage }) => {
           </div>
         </section>
 
-        {/* NEW: Recent Scans Section */}
+        {/* Recent Scans Section */}
         <section className="px-6 mb-6">
           <div className="max-w-md mx-auto">
             <RecentScans 
@@ -140,14 +140,14 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, currentPage }) => {
           </div>
         </section>
 
-        {/* NEW: Sustainability Tips Carousel */}
+        {/* Sustainability Tips Carousel */}
         <section className="px-6 mb-6">
           <div className="max-w-md mx-auto">
             <SustainabilityTips />
           </div>
         </section>
 
-        {/* NEW: Eco Facts Section */}
+        {/* Eco Facts Section */}
         <section className="px-6 mb-6">
           <div className="max-w-md mx-auto">
             <EcoFacts />

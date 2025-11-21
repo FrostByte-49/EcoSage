@@ -44,7 +44,7 @@ const EcoFacts: React.FC = () => {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center">
           <Lightbulb className="w-5 h-5 text-yellow-400 mr-2" />
-          <h3 className="text-white font-semibold">Did You Know?</h3>
+          <h3 className="text-white font-bold">Did You Know?</h3>
         </div>
         <button
           onClick={getRandomFacts}
