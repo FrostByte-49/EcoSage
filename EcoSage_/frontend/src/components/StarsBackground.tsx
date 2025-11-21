@@ -1,9 +1,20 @@
-import React, { useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
+
+interface Star {
+  id: number;
+  top: number;
+  left: number;
+  size: number;
+  opacity: number;
+  delay: number;
+  duration: number;
+}
 
 const StarsBackground: React.FC = () => {
-  // Generate stars data once using useMemo
-  const stars = useMemo(() => {
-    return Array.from({ length: 150 }, (_, i) => ({
+  const [stars, setStars] = useState<Star[]>([]);
+
+  useEffect(() => {
+    const generatedStars = Array.from({ length: 150 }, (_, i) => ({
       id: i,
       top: Math.random() * 100,
       left: Math.random() * 100,
@@ -12,7 +23,13 @@ const StarsBackground: React.FC = () => {
       delay: Math.random() * 5,
       duration: Math.random() * 3 + 2
     }));
-  }, []); // Empty dependency array means this runs once
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setStars(generatedStars);
+  }, []);
+
+  if (stars.length === 0) {
+    return <div className="fixed inset-0 z-0 bg-black" />;
+  }
 
   return (
     <div className="fixed inset-0 z-0 bg-black">
