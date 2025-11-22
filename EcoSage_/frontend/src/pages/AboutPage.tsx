@@ -36,7 +36,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ onNavigate, currentPage }) => {
   const developerInfo = {
     name: "Pranav Khalate",
     role: "Student",
-    image: "https://res.cloudinary.com/dhn92qb61/image/upload/v1751381563/Gojo__o3vpim.webp",
+    image: "https://res.cloudinary.com/dhn92qb61/image/upload/v1763803739/Me__ctkwrq.jpg",
     bio: "Passionate about building solutions that bridge technology and sustainability...",
     email: "pranav.kh25@gmail.com",
     socials: [
@@ -133,7 +133,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ onNavigate, currentPage }) => {
                 <img 
                   src={developerInfo.image} 
                   alt={developerInfo.name} 
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover object-top"
                 />
               </div>
 
@@ -159,6 +159,8 @@ const AboutPage: React.FC<AboutPageProps> = ({ onNavigate, currentPage }) => {
                   <a
                     key={index}
                     href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors"
                     title={social.label}
                   >

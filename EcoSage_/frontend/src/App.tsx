@@ -5,10 +5,21 @@ import UploadPage from './pages/UploadPage';
 import AboutPage from './pages/AboutPage';
 
 function App() {
-  const [currentPage, setCurrentPage] = useState<'home' | 'scan' | 'upload' | 'about'>('home');
+  const [currentPage, setCurrentPage] = useState<'home' | 'scan' | 'upload' | 'about'>(() => {
+    // Initialize State From LocalStorage
+    if (typeof window !== 'undefined') {
+      const savedPage = localStorage.getItem('ecosage-currentPage');
+      if (savedPage && ['home', 'scan', 'upload', 'about'].includes(savedPage)) {
+        return savedPage as 'home' | 'scan' | 'upload' | 'about';
+      }
+    }
+    return 'home';
+  });
 
   const handleNavigate = (page: string) => {
-    setCurrentPage(page as 'home' | 'scan' | 'upload' | 'about');
+    const newPage = page as 'home' | 'scan' | 'upload' | 'about';
+    setCurrentPage(newPage);
+    localStorage.setItem('ecosage-currentPage', newPage);
   };
 
   const pageProps = {
