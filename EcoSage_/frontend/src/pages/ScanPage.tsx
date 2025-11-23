@@ -130,11 +130,11 @@ const ScanPage: React.FC<ScanPageProps> = ({ onNavigate, currentPage, onAnalysis
         if (mounted) {
           const error = err as { name?: string };
           if (error.name === 'NotAllowedError') {
-            setError("Camera permission denied. Please allow camera access.");
+            setError("Camera Permission Denied. Please Allow Camera Access.");
           } else if (error.name === 'NotFoundError') {
-            setError("No camera found on this device.");
+            setError("No Camera Found On This Device.");
           } else {
-            setError("Unable to access camera. Please try again.");
+            setError("Unable To Access Camera. Please Try Again.");
           }
           setState('error');
         }
@@ -272,7 +272,7 @@ const ScanPage: React.FC<ScanPageProps> = ({ onNavigate, currentPage, onAnalysis
       <StarsBackground />
       
       <div className="relative z-10 pb-20">
-        <Header title="Scan" />
+        <Header />
         
         <div className="max-w-md mx-auto px-6 py-8">
           <motion.div
@@ -280,8 +280,14 @@ const ScanPage: React.FC<ScanPageProps> = ({ onNavigate, currentPage, onAnalysis
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-8"
           >
-            <h1 className="text-3xl font-bold text-white mb-2">Product Scan</h1>
-            <p className="text-gray-400 text-sm">
+            <h1 className="text-3xl font-extrabold text-center text-white mt-4 mb-0.5 uppercase">Product Scan</h1>
+            {/* Line Animation */}
+            <div className="flex justify-center items-center gap-2 mb-1">
+              <div className="h-0.5 w-20 bg-gradient-to-r from-white/40 to-white/20 rounded-full" />
+              <span className="text-lg text-white font-light">✦</span>
+              <div className="h-0.5 w-20 bg-gradient-to-r from-white/20 to-white/40 rounded-full" />
+            </div>
+            <p className="text-gray-400 text-sm capitalize">
               {state === 'captured' && "Ready for analysis"}
               {state === 'ready' && "Position product in frame"}
               {state === 'loading' && "Initializing camera..."}
@@ -389,7 +395,7 @@ const ScanPage: React.FC<ScanPageProps> = ({ onNavigate, currentPage, onAnalysis
                       transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
                     />
                   </div>
-                  <p className="text-gray-400 text-sm mt-4">Initializing camera...</p>
+                  <p className="text-gray-400 text-sm mt-4">Initializing Camera...</p>
                 </motion.div>
               )}
 
@@ -404,8 +410,8 @@ const ScanPage: React.FC<ScanPageProps> = ({ onNavigate, currentPage, onAnalysis
                     <AlertCircle className="w-12 h-12 text-red-400" />
                   </div>
                   <p className="text-red-400 text-center font-medium mb-2">{error}</p>
-                  <p className="text-gray-500 text-sm text-center">
-                    Check your browser settings and try again
+                  <p className="text-gray-500 text-sm text-center mt-2 capitalize">
+                    Check your browser settings & try again
                   </p>
                 </motion.div>
               )}
@@ -459,7 +465,7 @@ const ScanPage: React.FC<ScanPageProps> = ({ onNavigate, currentPage, onAnalysis
                   exit={{ opacity: 0, y: -20 }}
                   onClick={handleCapture}
                   disabled={state !== 'ready'}
-                  className="w-full py-4 bg-white text-black rounded-2xl font-bold text-lg hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] transition-all duration-200 shadow-xl flex items-center justify-center space-x-3"
+                  className="w-full mt-[-0.5rem] py-4 bg-white text-black rounded-2xl font-bold text-lg hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed active:scale-[0.98] transition-all duration-200 shadow-xl flex items-center justify-center space-x-3"
                 >
                   <Camera className="w-6 h-6" />
                   <span>{state === 'scanning' ? 'Capturing...' : 'Capture Image'}</span>
@@ -478,10 +484,10 @@ const ScanPage: React.FC<ScanPageProps> = ({ onNavigate, currentPage, onAnalysis
               <Info className="w-5 h-5 text-gray-400" />
               <h3 className="text-white font-bold">Scanning Tips</h3>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-3 capitalize">
               {[
                 "Ensure bright, even lighting",
-                "Capture all labels and certifications",
+                "Capture all labels & certifications",
                 "Hold device steady to avoid blur",
                 "Fill frame with product packaging"
               ].map((tip, i) => (
@@ -501,7 +507,7 @@ const ScanPage: React.FC<ScanPageProps> = ({ onNavigate, currentPage, onAnalysis
           >
             {[
               { label: "Accuracy", value: "95%" },
-              { label: "Avg. Time", value: "2s" },
+              { label: "Avg. Time", value: "5s" },
               { label: "AI Model", value: "Gemini" }
             ].map((stat, i) => (
               <div key={i} className="bg-gray-900/40 backdrop-blur-sm rounded-xl p-4 text-center border border-gray-800/30">
