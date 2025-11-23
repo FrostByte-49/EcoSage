@@ -1,10 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Camera, RotateCcw, Zap, Info, Scan, AlertCircle } from 'lucide-react';
+import React, { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Camera, RotateCcw, Zap, Info, Scan, AlertCircle } from "lucide-react";
 import StarsBackground from '../components/StarsBackground';
 import Header from '../components/Header';
 import BottomNav from '../components/BottomNav';
 import { analyzeProduct } from '../services/api';
+import { addToScanHistory } from '../services/ScanHistory';
 
 interface ScanPageProps {
   onNavigate: (page: string) => void;
@@ -16,11 +17,9 @@ const ScanPage: React.FC<ScanPageProps> = ({ onNavigate, currentPage, onAnalysis
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
-
-  const [state, setState] = useState<'loading' | 'ready' | 'error' | 'captured' | 'scanning'>(
-    'loading'
-  );
-  const [error, setError] = useState<string>('');
+  
+  const [state, setState] = useState<'loading' | 'ready' | 'error' | 'captured' | 'scanning'>('loading');
+  const [error, setError] = useState<string>("");
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
   const [analysisError, setAnalysisError] = useState<string>('');
@@ -32,61 +31,60 @@ const ScanPage: React.FC<ScanPageProps> = ({ onNavigate, currentPage, onAnalysis
 
     const initCamera = async () => {
       try {
-        console.log('Requesting camera access...');
-
+        console.log("Requesting camera access...");
+        
         const stream = await navigator.mediaDevices.getUserMedia({
           video: {
-            facingMode: 'environment',
+            facingMode: "environment",
             width: { ideal: 1920 },
-            height: { ideal: 1080 },
+            height: { ideal: 1080 }
           },
         });
 
-        console.log('Camera stream obtained');
+        console.log("Camera stream obtained");
 
         if (!mounted) {
-          stream.getTracks().forEach((track) => track.stop());
+          stream.getTracks().forEach(track => track.stop());
           return;
         }
 
         streamRef.current = stream;
 
-        console.log('Video ref exists?', !!videoRef.current);
-
+        console.log("Video ref exists?", !!videoRef.current);
+        
         if (videoRef.current) {
           const video = videoRef.current;
-          console.log('Video element:', video);
-
+          console.log("Video element:", video);
+          
           video.muted = true;
           video.playsInline = true;
           video.autoplay = true;
-          video.setAttribute('playsinline', '');
-          video.setAttribute('autoplay', '');
-          video.setAttribute('muted', '');
-
+          video.setAttribute("playsinline", "");
+          video.setAttribute("autoplay", "");
+          video.setAttribute("muted", "");
+          
           video.srcObject = stream;
-
-          console.log('Video element configured, stream assigned');
-
+          
+          console.log("Video element configured, stream assigned");
+          
           const handleCanPlay = () => {
-            console.log('Video can play event fired');
+            console.log("Video can play event fired");
             if (mounted) {
               setState('ready');
             }
           };
 
           const handleLoadedMetadata = () => {
-            console.log('Video metadata loaded event fired');
-            video
-              .play()
+            console.log("Video metadata loaded event fired");
+            video.play()
               .then(() => {
-                console.log('Video playing successfully');
+                console.log("Video playing successfully");
                 if (mounted) {
                   setState('ready');
                 }
               })
               .catch((playErr) => {
-                console.error('Play error:', playErr);
+                console.error("Play error:", playErr);
                 if (mounted) {
                   setState('ready');
                 }
@@ -95,18 +93,17 @@ const ScanPage: React.FC<ScanPageProps> = ({ onNavigate, currentPage, onAnalysis
 
           video.addEventListener('loadedmetadata', handleLoadedMetadata, { once: true });
           video.addEventListener('canplay', handleCanPlay, { once: true });
-
+          
           let attempts = 0;
           const tryPlay = () => {
             attempts++;
             console.log(`Attempting to play video (attempt ${attempts})`);
-
+            
             if (video.readyState >= 2) {
               console.log(`Video ready state: ${video.readyState}`);
-              video
-                .play()
+              video.play()
                 .then(() => {
-                  console.log('Video playing from fallback');
+                  console.log("Video playing from fallback");
                   if (mounted) {
                     setState('ready');
                   }
@@ -116,7 +113,7 @@ const ScanPage: React.FC<ScanPageProps> = ({ onNavigate, currentPage, onAnalysis
                   if (attempts < 3 && mounted) {
                     setTimeout(tryPlay, 500);
                   } else if (mounted) {
-                    console.log('Forcing ready state despite play failure');
+                    console.log("Forcing ready state despite play failure");
                     setState('ready');
                   }
                 });
@@ -125,19 +122,19 @@ const ScanPage: React.FC<ScanPageProps> = ({ onNavigate, currentPage, onAnalysis
               setTimeout(tryPlay, 300);
             }
           };
-
+          
           timeoutId = setTimeout(tryPlay, 500);
         }
       } catch (err) {
-        console.error('Camera error:', err);
+        console.error("Camera error:", err);
         if (mounted) {
           const error = err as { name?: string };
           if (error.name === 'NotAllowedError') {
-            setError('Camera permission denied. Please allow camera access.');
+            setError("Camera permission denied. Please allow camera access.");
           } else if (error.name === 'NotFoundError') {
-            setError('No camera found on this device.');
+            setError("No camera found on this device.");
           } else {
-            setError('Unable to access camera. Please try again.');
+            setError("Unable to access camera. Please try again.");
           }
           setState('error');
         }
@@ -150,7 +147,7 @@ const ScanPage: React.FC<ScanPageProps> = ({ onNavigate, currentPage, onAnalysis
       mounted = false;
       if (timeoutId) clearTimeout(timeoutId);
       if (streamRef.current) {
-        streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current.getTracks().forEach(track => track.stop());
       }
     };
   }, []);
@@ -165,22 +162,22 @@ const ScanPage: React.FC<ScanPageProps> = ({ onNavigate, currentPage, onAnalysis
 
       const video = videoRef.current;
       const canvas = document.createElement('canvas');
-
+      
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
-
+      
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-
+      
       const imageData = canvas.toDataURL('image/jpeg', 0.95);
       setCapturedImage(imageData);
-
+      
       if (streamRef.current) {
-        streamRef.current.getTracks().forEach((track) => track.stop());
+        streamRef.current.getTracks().forEach(track => track.stop());
       }
-
+      
       setState('captured');
     }, 1500);
   };
@@ -188,15 +185,15 @@ const ScanPage: React.FC<ScanPageProps> = ({ onNavigate, currentPage, onAnalysis
   const handleRetake = async () => {
     setCapturedImage(null);
     setState('loading');
-    setError('');
-    setAnalysisError('');
+    setError("");
+    setAnalysisError("");
 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: {
-          facingMode: 'environment',
+          facingMode: "environment",
           width: { ideal: 1920 },
-          height: { ideal: 1080 },
+          height: { ideal: 1080 }
         },
       });
 
@@ -205,24 +202,24 @@ const ScanPage: React.FC<ScanPageProps> = ({ onNavigate, currentPage, onAnalysis
       if (videoRef.current) {
         const video = videoRef.current;
         video.srcObject = stream;
-        video.setAttribute('playsinline', '');
-        video.setAttribute('autoplay', '');
-        video.setAttribute('muted', '');
+        video.setAttribute("playsinline", "");
+        video.setAttribute("autoplay", "");
+        video.setAttribute("muted", "");
         video.muted = true;
         video.playsInline = true;
-
+        
         const handleReady = async () => {
           try {
             await video.play();
             setState('ready');
           } catch (err) {
-            console.error('Play error on retake:', err);
+            console.error("Play error on retake:", err);
           }
         };
 
         video.addEventListener('loadedmetadata', handleReady, { once: true });
         video.addEventListener('canplay', handleReady, { once: true });
-
+        
         setTimeout(() => {
           if (video.readyState >= 2) {
             video.play().catch(console.error);
@@ -231,25 +228,30 @@ const ScanPage: React.FC<ScanPageProps> = ({ onNavigate, currentPage, onAnalysis
         }, 1000);
       }
     } catch (err) {
-      console.error('Retake error:', err);
-      setError('Unable to restart camera');
+      console.error("Retake error:", err);
+      setError("Unable to restart camera");
       setState('error');
     }
   };
 
   const handleAnalyze = async () => {
     if (!capturedImage) return;
-
+    
     setAnalyzing(true);
     setAnalysisError('');
-
+    
     try {
       console.log('📤 Sending image to API for analysis...');
-
+      
       const result = await analyzeProduct(capturedImage);
-
+      
       if (result.success && result.analysis) {
         console.log('✅ Analysis successful');
+        
+        // Save to scan history
+        addToScanHistory(result.analysis, capturedImage);
+        
+        // Pass to results page
         onAnalysisComplete(result.analysis, capturedImage);
       } else {
         console.error('❌ Analysis failed:', result.error);
@@ -259,9 +261,7 @@ const ScanPage: React.FC<ScanPageProps> = ({ onNavigate, currentPage, onAnalysis
     } catch (error) {
       console.error('❌ Error during analysis:', error);
       setAnalysisError('Failed to connect to server. Please ensure the backend is running.');
-      alert(
-        'Failed to analyze product. Please ensure the backend server is running on http://localhost:5000'
-      );
+      alert('Failed to analyze product. Please ensure the backend server is running on http://localhost:5000');
     } finally {
       setAnalyzing(false);
     }
@@ -270,10 +270,10 @@ const ScanPage: React.FC<ScanPageProps> = ({ onNavigate, currentPage, onAnalysis
   return (
     <div className="min-h-screen relative text-white overflow-hidden bg-black">
       <StarsBackground />
-
+      
       <div className="relative z-10 pb-20">
         <Header title="Scan" />
-
+        
         <div className="max-w-md mx-auto px-6 py-8">
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -282,11 +282,11 @@ const ScanPage: React.FC<ScanPageProps> = ({ onNavigate, currentPage, onAnalysis
           >
             <h1 className="text-3xl font-bold text-white mb-2">Product Scan</h1>
             <p className="text-gray-400 text-sm">
-              {state === 'captured' && 'Ready for analysis'}
-              {state === 'ready' && 'Position product in frame'}
-              {state === 'loading' && 'Initializing camera...'}
-              {state === 'scanning' && 'Capturing image...'}
-              {state === 'error' && 'Camera unavailable'}
+              {state === 'captured' && "Ready for analysis"}
+              {state === 'ready' && "Position product in frame"}
+              {state === 'loading' && "Initializing camera..."}
+              {state === 'scanning' && "Capturing image..."}
+              {state === 'error' && "Camera unavailable"}
             </p>
           </motion.div>
 
@@ -311,13 +311,13 @@ const ScanPage: React.FC<ScanPageProps> = ({ onNavigate, currentPage, onAnalysis
                 <motion.div
                   className="absolute inset-8 border-2 border-white/40 rounded-2xl"
                   animate={{ opacity: [0.3, 0.8, 0.3] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                 />
 
                 <motion.div
                   className="absolute left-8 right-8 h-[2px] bg-gradient-to-r from-transparent via-white to-transparent"
-                  animate={{ top: ['10%', '90%'] }}
-                  transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+                  animate={{ top: ["10%", "90%"] }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                 />
 
                 <div className="absolute top-8 left-8 w-6 h-6 border-t-4 border-l-4 border-white/80"></div>
@@ -344,9 +344,9 @@ const ScanPage: React.FC<ScanPageProps> = ({ onNavigate, currentPage, onAnalysis
                   exit={{ opacity: 0 }}
                   className="w-full h-full flex items-center justify-center bg-black absolute inset-0 z-10"
                 >
-                  <img
-                    src={capturedImage}
-                    alt="Captured product"
+                  <img 
+                    src={capturedImage} 
+                    alt="Captured product" 
                     className="w-full h-full object-contain"
                   />
                   <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-full">
@@ -385,8 +385,8 @@ const ScanPage: React.FC<ScanPageProps> = ({ onNavigate, currentPage, onAnalysis
                   <div className="w-16 h-1 bg-gray-800 rounded-full overflow-hidden">
                     <motion.div
                       className="h-full bg-white"
-                      animate={{ x: ['-100%', '200%'] }}
-                      transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
+                      animate={{ x: ["-100%", "200%"] }}
+                      transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
                     />
                   </div>
                   <p className="text-gray-400 text-sm mt-4">Initializing camera...</p>
@@ -480,10 +480,10 @@ const ScanPage: React.FC<ScanPageProps> = ({ onNavigate, currentPage, onAnalysis
             </div>
             <div className="space-y-3">
               {[
-                'Ensure bright, even lighting',
-                'Capture all labels and certifications',
-                'Hold device steady to avoid blur',
-                'Fill frame with product packaging',
+                "Ensure bright, even lighting",
+                "Capture all labels and certifications",
+                "Hold device steady to avoid blur",
+                "Fill frame with product packaging"
               ].map((tip, i) => (
                 <div key={i} className="flex items-start space-x-3">
                   <div className="w-1.5 h-1.5 bg-white rounded-full mt-2 flex-shrink-0"></div>
@@ -500,14 +500,11 @@ const ScanPage: React.FC<ScanPageProps> = ({ onNavigate, currentPage, onAnalysis
             className="mt-6 grid grid-cols-3 gap-4"
           >
             {[
-              { label: 'Accuracy', value: '95%' },
-              { label: 'Avg. Time', value: '2s' },
-              { label: 'AI Model', value: 'Gemini' },
+              { label: "Accuracy", value: "95%" },
+              { label: "Avg. Time", value: "2s" },
+              { label: "AI Model", value: "Gemini" }
             ].map((stat, i) => (
-              <div
-                key={i}
-                className="bg-gray-900/40 backdrop-blur-sm rounded-xl p-4 text-center border border-gray-800/30"
-              >
+              <div key={i} className="bg-gray-900/40 backdrop-blur-sm rounded-xl p-4 text-center border border-gray-800/30">
                 <div className="text-white font-bold text-lg">{stat.value}</div>
                 <div className="text-gray-500 text-xs mt-1">{stat.label}</div>
               </div>
@@ -517,7 +514,7 @@ const ScanPage: React.FC<ScanPageProps> = ({ onNavigate, currentPage, onAnalysis
       </div>
 
       <BottomNav currentPage={currentPage} onNavigate={onNavigate} />
-
+      
       <canvas ref={canvasRef} className="hidden" />
     </div>
   );

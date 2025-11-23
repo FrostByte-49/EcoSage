@@ -5,6 +5,7 @@ import StarsBackground from '../components/StarsBackground';
 import Header from '../components/Header';
 import BottomNav from '../components/BottomNav';
 import { analyzeProduct } from '../services/api';
+import { addToScanHistory } from '../services/ScanHistory';
 
 interface UploadPageProps {
   onNavigate: (page: string) => void;
@@ -37,7 +38,7 @@ const UploadPage: React.FC<UploadPageProps> = ({ onNavigate, currentPage, onAnal
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setIsDragging(false);
-
+    
     const file = e.dataTransfer.files[0];
     if (file) {
       handleFileSelect(file);
@@ -70,17 +71,22 @@ const UploadPage: React.FC<UploadPageProps> = ({ onNavigate, currentPage, onAnal
 
   const handleAnalyze = async () => {
     if (!uploadedImage) return;
-
+    
     setAnalyzing(true);
     setAnalysisError('');
-
+    
     try {
       console.log('📤 Sending uploaded image to API for analysis...');
-
+      
       const result = await analyzeProduct(uploadedImage);
-
+      
       if (result.success && result.analysis) {
         console.log('✅ Analysis successful');
+        
+        // Save to scan history
+        addToScanHistory(result.analysis, uploadedImage);
+        
+        // Pass to results page
         onAnalysisComplete(result.analysis, uploadedImage);
       } else {
         console.error('❌ Analysis failed:', result.error);
@@ -90,9 +96,7 @@ const UploadPage: React.FC<UploadPageProps> = ({ onNavigate, currentPage, onAnal
     } catch (error) {
       console.error('❌ Error during analysis:', error);
       setAnalysisError('Failed to connect to server. Please ensure the backend is running.');
-      alert(
-        'Failed to analyze product. Please ensure the backend server is running on http://localhost:5000'
-      );
+      alert('Failed to analyze product. Please ensure the backend server is running on http://localhost:5000');
     } finally {
       setAnalyzing(false);
     }
@@ -101,10 +105,10 @@ const UploadPage: React.FC<UploadPageProps> = ({ onNavigate, currentPage, onAnal
   return (
     <div className="min-h-screen relative text-white overflow-hidden bg-black">
       <StarsBackground />
-
+      
       <div className="relative z-10 pb-20">
         <Header title="Upload" />
-
+        
         <div className="max-w-md mx-auto px-6 py-8">
           {/* Header */}
           <motion.div
@@ -114,7 +118,10 @@ const UploadPage: React.FC<UploadPageProps> = ({ onNavigate, currentPage, onAnal
           >
             <h1 className="text-3xl font-bold text-white mb-2">Upload Image</h1>
             <p className="text-gray-400 text-sm">
-              {uploadedImage ? 'Ready for analysis' : 'Upload a product image to analyze'}
+              {uploadedImage 
+                ? "Ready for analysis" 
+                : "Upload a product image to analyze"
+              }
             </p>
           </motion.div>
 
@@ -128,12 +135,12 @@ const UploadPage: React.FC<UploadPageProps> = ({ onNavigate, currentPage, onAnal
             {uploadedImage ? (
               // Image Preview
               <div className="relative bg-gray-900/80 backdrop-blur-lg rounded-3xl border-2 border-gray-700 aspect-[3/4] overflow-hidden shadow-2xl">
-                <img
-                  src={uploadedImage}
-                  alt="Uploaded product"
+                <img 
+                  src={uploadedImage} 
+                  alt="Uploaded product" 
                   className="w-full h-full object-contain"
                 />
-
+                
                 {/* Clear button */}
                 <button
                   onClick={handleClear}
@@ -158,17 +165,16 @@ const UploadPage: React.FC<UploadPageProps> = ({ onNavigate, currentPage, onAnal
                   relative bg-gray-900/80 backdrop-blur-lg rounded-3xl border-2 border-dashed 
                   aspect-[3/4] flex flex-col items-center justify-center cursor-pointer
                   transition-all duration-300 shadow-2xl
-                  ${
-                    isDragging
-                      ? 'border-white bg-gray-800/80 scale-105'
-                      : 'border-gray-700 hover:border-gray-600 hover:bg-gray-900/90'
+                  ${isDragging 
+                    ? 'border-white bg-gray-800/80 scale-105' 
+                    : 'border-gray-700 hover:border-gray-600 hover:bg-gray-900/90'
                   }
                 `}
               >
                 <motion.div
-                  animate={{
+                  animate={{ 
                     scale: isDragging ? 1.1 : 1,
-                    rotate: isDragging ? 5 : 0,
+                    rotate: isDragging ? 5 : 0
                   }}
                   transition={{ duration: 0.3 }}
                   className="flex flex-col items-center"
@@ -180,14 +186,16 @@ const UploadPage: React.FC<UploadPageProps> = ({ onNavigate, currentPage, onAnal
                       <ImageIcon className="w-12 h-12 text-gray-400" />
                     )}
                   </div>
-
+                  
                   <p className="text-white text-lg font-semibold mb-2">
                     {isDragging ? 'Drop image here' : 'Upload Product Image'}
                   </p>
                   <p className="text-gray-400 text-sm text-center px-8">
                     Drag & drop or click to browse
                   </p>
-                  <p className="text-gray-500 text-xs mt-2">Supports: JPG, PNG, WEBP</p>
+                  <p className="text-gray-500 text-xs mt-2">
+                    Supports: JPG, PNG, WEBP
+                  </p>
                 </motion.div>
 
                 {/* Hidden file input */}
@@ -236,7 +244,7 @@ const UploadPage: React.FC<UploadPageProps> = ({ onNavigate, currentPage, onAnal
                       </>
                     )}
                   </button>
-
+                  
                   {analysisError && (
                     <p className="text-red-400 text-sm text-center">{analysisError}</p>
                   )}
@@ -279,10 +287,10 @@ const UploadPage: React.FC<UploadPageProps> = ({ onNavigate, currentPage, onAnal
             </div>
             <div className="space-y-3">
               {[
-                'Choose clear, well-lit images',
-                'Ensure product labels are visible',
-                'Include any certifications or eco-labels',
-                'Avoid blurry or low-resolution photos',
+                "Choose clear, well-lit images",
+                "Ensure product labels are visible",
+                "Include any certifications or eco-labels",
+                "Avoid blurry or low-resolution photos"
               ].map((tip, i) => (
                 <div key={i} className="flex items-start space-x-3">
                   <div className="w-1.5 h-1.5 bg-white rounded-full mt-2 flex-shrink-0"></div>
@@ -300,14 +308,11 @@ const UploadPage: React.FC<UploadPageProps> = ({ onNavigate, currentPage, onAnal
             className="mt-6 grid grid-cols-3 gap-4"
           >
             {[
-              { label: 'Max Size', value: '10MB' },
-              { label: 'Formats', value: 'All' },
-              { label: 'AI Model', value: 'Gemini' },
+              { label: "Max Size", value: "10MB" },
+              { label: "Formats", value: "All" },
+              { label: "AI Model", value: "Gemini" }
             ].map((stat, i) => (
-              <div
-                key={i}
-                className="bg-gray-900/40 backdrop-blur-sm rounded-xl p-4 text-center border border-gray-800/30"
-              >
+              <div key={i} className="bg-gray-900/40 backdrop-blur-sm rounded-xl p-4 text-center border border-gray-800/30">
                 <div className="text-white font-bold text-lg">{stat.value}</div>
                 <div className="text-gray-500 text-xs mt-1">{stat.label}</div>
               </div>
@@ -322,7 +327,9 @@ const UploadPage: React.FC<UploadPageProps> = ({ onNavigate, currentPage, onAnal
             className="flex items-center justify-center space-x-2 mt-6"
           >
             <Sparkles className="w-4 h-4 text-purple-400" />
-            <span className="text-xs text-gray-500">Powered by Google Gemini AI</span>
+            <span className="text-xs text-gray-500">
+              Powered by Google Gemini AI
+            </span>
           </motion.div>
         </div>
       </div>
