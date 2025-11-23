@@ -139,20 +139,47 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate, currentPage }) =>
   };
 
   useEffect(() => {
-    // Load data from localStorage
-    const savedName = localStorage.getItem('ecosage-userName');
-    if (savedName) setUserName(savedName);
+    // Function to load data
+    const loadData = () => {
+      const savedName = localStorage.getItem('ecosage-userName');
+      if (savedName) setUserName(savedName);
 
-    const savedImage = localStorage.getItem('ecosage-profileImage');
-    if (savedImage) setProfileImage(savedImage);
+      const savedImage = localStorage.getItem('ecosage-profileImage');
+      if (savedImage) setProfileImage(savedImage);
 
-    const savedHistory = localStorage.getItem('ecosage-scanHistory');
-    if (savedHistory) {
-      const history = JSON.parse(savedHistory);
-      setScanHistory(history);
-      calculateStats(history);
-    }
-  }, [calculateStats]);
+      const savedHistory = localStorage.getItem('ecosage-scanHistory');
+      if (savedHistory) {
+        const history = JSON.parse(savedHistory);
+        setScanHistory(history);
+        calculateStats(history);
+      }
+    };
+
+    // Load data initially
+    loadData();
+
+    // Reload data when page becomes visible (user navigates back)
+    const handleVisibilityChange = () => {
+      if (!document.hidden && currentPage === 'profile') {
+        loadData();
+      }
+    };
+
+    // Listen for storage changes (in case data changes in another tab)
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'ecosage-scanHistory') {
+        loadData();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, [calculateStats, currentPage]);
 
   const achievements: Achievement[] = [
     {
