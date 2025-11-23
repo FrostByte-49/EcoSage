@@ -12,7 +12,7 @@ const BottomNav: React.FC<BottomNavProps> = ({ currentPage, onNavigate }) => {
     { id: 'scan', icon: Scan, label: 'Scan' },
     { id: 'upload', icon: Upload, label: 'Upload' },
     { id: 'about', icon: NotebookText, label: 'About' },
-    { id: 'profile', icon: UserRound, label: 'Profile' }
+    { id: 'profile', icon: UserRound, label: 'Profile' },
   ];
 
   return (
@@ -22,14 +22,14 @@ const BottomNav: React.FC<BottomNavProps> = ({ currentPage, onNavigate }) => {
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = currentPage === item.id;
-            
+
             return (
               <button
                 key={item.id}
                 onClick={() => onNavigate(item.id)}
                 className={`flex flex-col items-center space-y-1 px-4 py-2 rounded-lg transition-all duration-200 ${
-                  isActive 
-                    ? 'text-white bg-gray-800' 
+                  isActive
+                    ? 'text-white bg-gray-800'
                     : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
                 }`}
               >

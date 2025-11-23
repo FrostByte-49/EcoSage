@@ -3,6 +3,7 @@ import HomePage from './pages/HomePage';
 import ScanPage from './pages/ScanPage';
 import UploadPage from './pages/UploadPage';
 import AboutPage from './pages/AboutPage';
+import ProfilePage from './pages/ProfilePage';
 import ResultsPage from './pages/ResultsPage';
 
 interface AnalysisData {
@@ -11,12 +12,12 @@ interface AnalysisData {
 }
 
 function App() {
-  const [currentPage, setCurrentPage] = useState<'home' | 'scan' | 'upload' | 'about' | 'results'>(() => {
+  const [currentPage, setCurrentPage] = useState<'home' | 'scan' | 'upload' | 'about' | 'profile' | 'results'>(() => {
     // Initialize State From LocalStorage
     if (typeof window !== 'undefined') {
       const savedPage = localStorage.getItem('ecosage-currentPage');
-      if (savedPage && ['home', 'scan', 'upload', 'about', 'results'].includes(savedPage)) {
-        return savedPage as 'home' | 'scan' | 'upload' | 'about' | 'results';
+      if (savedPage && ['home', 'scan', 'upload', 'about', 'profile', 'results'].includes(savedPage)) {
+        return savedPage as 'home' | 'scan' | 'upload' | 'about' | 'profile' | 'results';
       }
     }
     return 'home';
@@ -39,7 +40,7 @@ function App() {
   });
 
   const handleNavigate = (page: string) => {
-    const newPage = page as 'home' | 'scan' | 'upload' | 'about' | 'results';
+    const newPage = page as 'home' | 'scan' | 'upload' | 'about' | 'profile' | 'results';
     setCurrentPage(newPage);
     localStorage.setItem('ecosage-currentPage', newPage);
     
@@ -83,6 +84,8 @@ function App() {
       );
     case 'about':
       return <AboutPage {...pageProps} />;
+    case 'profile':
+      return <ProfilePage {...pageProps} />;
     default:
       return <HomePage {...pageProps} />;
   }
