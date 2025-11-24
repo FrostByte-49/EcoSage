@@ -116,8 +116,14 @@ const UploadPage: React.FC<UploadPageProps> = ({ onNavigate, currentPage, onAnal
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-8"
           >
-            <h1 className="text-3xl font-bold text-white mb-2">Upload Image</h1>
-            <p className="text-gray-400 text-sm">
+            <h1 className="text-3xl font-extrabold text-center text-white mt-4 mb-0.5 uppercase">Upload Image</h1>
+            {/* Line Animation */}
+            <div className="flex justify-center items-center gap-2 mb-1">
+              <div className="h-0.5 w-20 bg-gradient-to-r from-white/40 to-white/20 rounded-full" />
+              <span className="text-lg text-white font-light">✦</span>
+              <div className="h-0.5 w-20 bg-gradient-to-r from-white/20 to-white/40 rounded-full" />
+            </div>
+            <p className="text-gray-400 text-sm capitalize">
               {uploadedImage 
                 ? "Ready for analysis" 
                 : "Upload a product image to analyze"
@@ -190,7 +196,7 @@ const UploadPage: React.FC<UploadPageProps> = ({ onNavigate, currentPage, onAnal
                   <p className="text-white text-lg font-semibold mb-2">
                     {isDragging ? 'Drop image here' : 'Upload Product Image'}
                   </p>
-                  <p className="text-gray-400 text-sm text-center px-8">
+                  <p className="text-gray-400 text-sm text-center px-8 capitalize">
                     Drag & drop or click to browse
                   </p>
                   <p className="text-gray-500 text-xs mt-2">
@@ -285,7 +291,7 @@ const UploadPage: React.FC<UploadPageProps> = ({ onNavigate, currentPage, onAnal
               <Info className="w-5 h-5 text-gray-400" />
               <h3 className="text-white font-bold">Upload Tips</h3>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-3 capitalize">
               {[
                 "Choose clear, well-lit images",
                 "Ensure product labels are visible",
@@ -319,18 +325,6 @@ const UploadPage: React.FC<UploadPageProps> = ({ onNavigate, currentPage, onAnal
             ))}
           </motion.div>
 
-          {/* AI Badge */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.7 }}
-            className="flex items-center justify-center space-x-2 mt-6"
-          >
-            <Sparkles className="w-4 h-4 text-purple-400" />
-            <span className="text-xs text-gray-500">
-              Powered by Google Gemini AI
-            </span>
-          </motion.div>
         </div>
       </div>
 
