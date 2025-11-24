@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, Image as ImageIcon, Zap, RotateCcw, Info, X, Sparkles } from 'lucide-react';
+import { Upload, Image as ImageIcon, Zap, RotateCcw, Info, X } from 'lucide-react';
 import StarsBackground from '../components/StarsBackground';
 import Header from '../components/Header';
 import BottomNav from '../components/BottomNav';

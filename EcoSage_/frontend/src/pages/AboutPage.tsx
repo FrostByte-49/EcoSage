@@ -37,7 +37,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ onNavigate, currentPage }) => {
     name: "Pranav Khalate",
     role: "Student",
     image: "https://res.cloudinary.com/dhn92qb61/image/upload/v1763803739/Me__ctkwrq.jpg",
-    bio: "Passionate about building solutions that bridge technology and sustainability...",
+    bio: "My comfort zone has WiFi & dark mode...",
     email: "pranav.kh25@gmail.com",
     socials: [
       { icon: Github, url: "https://github.com/FrostByte-49", target: "_blank", rel: "noreferrer noopener", label: "GitHub" },
@@ -54,8 +54,8 @@ const AboutPage: React.FC<AboutPageProps> = ({ onNavigate, currentPage }) => {
         <Header />
         
         <div className="max-w-md mx-auto px-6 py-8">
-          <h1 className="text-4xl font-extrabold text-center text-white mt-4 mb-0.5 uppercase">About Us</h1>
-          {/* Line Animation */}
+          <h1 className="text-3xl font-extrabold text-center text-white mt-4 mb-0.5 uppercase">About Us</h1>
+            {/* Line Animation */}
             <div className="flex justify-center items-center gap-2 mb-8">
               <div className="h-0.5 w-20 bg-gradient-to-r from-white/40 to-white/20 rounded-full" />
               <span className="text-lg text-white font-light">✦</span>
@@ -126,7 +126,7 @@ const AboutPage: React.FC<AboutPageProps> = ({ onNavigate, currentPage }) => {
 
           {/* Developer Info */}
           <div className="bg-gray-900/80 backdrop-blur-lg rounded-2xl border border-gray-800 p-6">
-            <h2 className="text-xl font-bold text-white mb-4 text-center">About The Developer</h2>
+            <h2 className="text-xl font-bold text-white mt-3 mb-8 text-center">About The Developer</h2>
             
             <div className="text-center mb-4">
               <div className="w-32 h-32 bg-gradient-to-br from-white to-gray-300 rounded-full flex items-center justify-center mx-auto mb-3 overflow-hidden">
@@ -171,19 +171,6 @@ const AboutPage: React.FC<AboutPageProps> = ({ onNavigate, currentPage }) => {
             </div>
           </div>
 
-          {/* App Stats */}
-          <div className="bg-gray-900/60 backdrop-blur-lg rounded-2xl border border-gray-800 p-6 mt-6">
-            <div className="grid grid-cols-2 gap-4 text-center">
-              <div>
-                <div className="text-white font-bold text-lg">Built With</div>
-                <div className="text-gray-400 text-xs mt-1">React + TypeScript</div>
-              </div>
-              <div>
-                <div className="text-white font-bold text-lg">Powered By</div>
-                <div className="text-gray-400 text-xs mt-1">Google Gemini AI</div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
