@@ -318,9 +318,9 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate, currentPage }) =>
       <StarsBackground />
       
       <div className="relative z-10 pb-24">
-        <Header title="Profile" />
+        <Header />
         
-        <div className="max-w-4xl mx-auto px-6 py-8">
+        <div className="max-w-md mx-auto px-6 py-8">
           {/* Profile Header */}
           <motion.div
             initial={{ opacity: 0, y: -20 }}
