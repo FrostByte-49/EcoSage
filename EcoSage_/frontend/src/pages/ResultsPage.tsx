@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Share2, Download, Sparkles } from 'lucide-react';
+import { ArrowLeft, Share2, Download } from 'lucide-react';
 import StarsBackground from '../components/StarsBackground';
 import Header from '../components/Header';
 import BottomNav from '../components/BottomNav';
@@ -42,7 +42,7 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
       <StarsBackground />
 
       <div className="relative z-10 pb-20">
-        <Header title="Analysis Results" />
+        <Header />
 
         <div className="max-w-4xl mx-auto px-6 py-8">
           {/* Header Actions */}
@@ -84,19 +84,6 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
               alt="Analyzed product"
               className="w-full max-h-64 object-contain rounded-xl"
             />
-          </motion.div>
-
-          {/* AI Badge */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 }}
-            className="flex items-center justify-center space-x-2 mb-6"
-          >
-            <Sparkles className="w-5 h-5 text-purple-400" />
-            <span className="text-sm text-gray-400">
-              AI-Powered Analysis by Gemini
-            </span>
           </motion.div>
 
           {/* Analysis Results */}

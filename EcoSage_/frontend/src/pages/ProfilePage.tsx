@@ -98,6 +98,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate, currentPage }) =>
     const waterSaved = total * 50; // ~50L per product
 
     // Calculate streak (consecutive days)
+    // eslint-disable-next-line react-hooks/immutability
     const streak = calculateStreak(history);
 
     setUserStats({
