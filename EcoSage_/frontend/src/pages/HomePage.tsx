@@ -3,7 +3,6 @@ import { Scan, Upload, Map, Zap, TrendingUp, Shield, Sparkles, Workflow } from '
 import StarsBackground from '../components/StarsBackground';
 import Header from '../components/Header';
 import BottomNav from '../components/BottomNav';
-import RecentScans from '../components/RecentScans';
 import SustainabilityTips from '../components/SustainabilityTips';
 import EcoFacts from '../components/EcoFacts';
 
@@ -138,15 +137,6 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, currentPage }) => {
           </div>
         </section>
 
-        {/* Recent Scans Section */}
-        <section className="px-6 mb-6">
-          <div className="max-w-md mx-auto">
-            <RecentScans 
-              onScanClick={(scan) => console.log('Scan clicked:', scan)}
-            />
-          </div>
-        </section>
-
         {/* Sustainability Tips Carousel */}
         <section className="px-6 mb-6">
           <div className="max-w-md mx-auto">
@@ -176,15 +166,15 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, currentPage }) => {
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-white text-black rounded-full flex items-center justify-center text-sm font-bold">1</div>
-                <p className="text-gray-300 text-sm">Scan or upload product image</p>
+                <p className="text-gray-300 text-sm capitalize">Scan or upload product image</p>
               </div>
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-white text-black rounded-full flex items-center justify-center text-sm font-bold">2</div>
-                <p className="text-gray-300 text-sm">AI analyzes sustainability factors</p>
+                <p className="text-gray-300 text-sm capitalize">AI analyzes sustainability factors</p>
               </div>
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-white text-black rounded-full flex items-center justify-center text-sm font-bold">3</div>
-                <p className="text-gray-300 text-sm">Get instant eco-friendly insights</p>
+                <p className="text-gray-300 text-sm capitalize">Get instant eco-friendly insights</p>
               </div>
             </div>
           </div>
