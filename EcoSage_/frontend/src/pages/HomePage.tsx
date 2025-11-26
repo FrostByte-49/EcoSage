@@ -1,5 +1,5 @@
 import React from 'react';
-import { Scan, Upload, Map, Zap, TrendingUp, Shield, Sparkles, Workflow, Calculator } from 'lucide-react';
+import { Scan, Upload, Map, Zap, TrendingUp, Shield, Sparkles, Workflow, Calculator, Leaf } from 'lucide-react';
 import StarsBackground from '../components/StarsBackground';
 import Header from '../components/Header';
 import BottomNav from '../components/BottomNav';
@@ -39,6 +39,13 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, currentPage }) => {
       title: 'Carbon Calculator',
       description: 'Caluclate Carbon',
       onClick: () => onNavigate('carbon'),
+      gradient: 'from-white to-gray-200'
+    },
+    {
+      icon: Leaf,
+      title: 'Alternative Finder',
+      description: 'Find Smart Alternative',
+      onClick: () => onNavigate('alternative'),
       gradient: 'from-white to-gray-200'
     }
   ];

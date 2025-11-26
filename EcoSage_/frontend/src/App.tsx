@@ -7,6 +7,7 @@ import ProfilePage from './pages/ProfilePage';
 import ResultsPage from './pages/ResultsPage';
 import RecyclePage from './pages/RecyclingPage';
 import CarbonCalculator from './pages/CarbonCalculatorPage';
+import AlternativeFinder from './pages/AlternativeFinderPage';
 
 interface AnalysisData {
   result: string;
@@ -14,12 +15,12 @@ interface AnalysisData {
 }
 
 function App() {
-  const [currentPage, setCurrentPage] = useState<'home' | 'scan' | 'upload' | 'about' | 'profile' | 'results' | 'recycle' | 'carbon' >(() => {
+  const [currentPage, setCurrentPage] = useState<'home' | 'scan' | 'upload' | 'about' | 'profile' | 'results' | 'recycle' | 'carbon' | 'alternative' >(() => {
     // Initialize State From LocalStorage
     if (typeof window !== 'undefined') {
       const savedPage = localStorage.getItem('ecosage-currentPage');
-      if (savedPage && ['home', 'scan', 'upload', 'about', 'profile', 'results' , 'recycle' , 'carbon'].includes(savedPage)) {
-        return savedPage as 'home' | 'scan' | 'upload' | 'about' | 'profile' | 'results' | 'recycle' | 'carbon';
+      if (savedPage && ['home', 'scan', 'upload', 'about', 'profile', 'results' , 'recycle' , 'carbon' , 'alternative'].includes(savedPage)) {
+        return savedPage as 'home' | 'scan' | 'upload' | 'about' | 'profile' | 'results' | 'recycle' | 'carbon' | 'alternative';
       }
     }
     return 'home';
@@ -42,7 +43,7 @@ function App() {
   });
 
   const handleNavigate = (page: string) => {
-    const newPage = page as 'home' | 'scan' | 'upload' | 'about' | 'profile' | 'results' | 'recycle' | 'carbon';
+    const newPage = page as 'home' | 'scan' | 'upload' | 'about' | 'profile' | 'results' | 'recycle' | 'carbon' | 'alternative';
     setCurrentPage(newPage);
     localStorage.setItem('ecosage-currentPage', newPage);
     
@@ -92,6 +93,8 @@ function App() {
       return <RecyclePage {...pageProps} />;
     case 'carbon':
       return <CarbonCalculator {...pageProps} />;
+    case 'alternative':
+      return <AlternativeFinder {...pageProps} />;
     default:
       return <HomePage {...pageProps} />;
   }
