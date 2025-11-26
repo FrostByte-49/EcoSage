@@ -29,7 +29,7 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, currentPage }) => {
     },
     {
       icon: Map,
-      title: 'Recycle Map',
+      title: 'Recyling Centers',
       description: 'Find Recycle Locations',
       onClick: () => onNavigate('recycle'),
       gradient: 'from-white to-gray-200'

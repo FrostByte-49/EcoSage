@@ -148,25 +148,33 @@ const RecyclingMapPage: React.FC<Props> = ({ onNavigate, currentPage }) => {
           };
         }
 
-        const mappedCenters: RecyclingCenter[] = data.elements.map((item: OverpassElement) => {
-          const itemLat = item.lat || item.center?.lat;
-          const itemLon = item.lon || item.center?.lon;
-          const distance = calculateDistance(lat, lon, itemLat, itemLon);
+        const mappedCenters: RecyclingCenter[] = data.elements
+          .map((item: OverpassElement) => {
+            const itemLat = item.lat ?? item.center?.lat;
+            const itemLon = item.lon ?? item.center?.lon;
+          
+            if (itemLat === undefined || itemLon === undefined) {
+              return null;
+            }
+          
+            const distance = calculateDistance(lat, lon, itemLat, itemLon);
+          
+            return {
+              id: item.id,
+              name: item.tags?.name || item.tags?.operator || "Recycling Point",
+              lat: itemLat,
+              lon: itemLon,
+              type: item.tags?.recycling_type || item.tags?.amenity || "recycling",
+              address: [
+                item.tags?.["addr:street"],
+                item.tags?.["addr:housenumber"],
+                item.tags?.["addr:city"]
+              ].filter(Boolean).join(", ") || "Address not available",
+              distance: parseFloat(distance.toFixed(2))
+            };
+          })
+        .filter((c: RecyclingCenter | null): c is RecyclingCenter => c !== null);
 
-          return {
-            id: item.id,
-            name: item.tags?.name || item.tags?.operator || "Recycling Point",
-            lat: itemLat,
-            lon: itemLon,
-            type: item.tags?.recycling_type || item.tags?.amenity || "recycling",
-            address: [
-              item.tags?.["addr:street"],
-              item.tags?.["addr:housenumber"],
-              item.tags?.["addr:city"]
-            ].filter(Boolean).join(", ") || "Address not available",
-            distance: parseFloat(distance.toFixed(2))
-          };
-        });
 
         // Sort by distance
         mappedCenters.sort((a, b) => (a.distance || 0) - (b.distance || 0));
