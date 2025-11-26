@@ -1,5 +1,5 @@
 import React from 'react';
-import { Scan, Upload, Map, Zap, TrendingUp, Shield, Sparkles, Workflow } from 'lucide-react';
+import { Scan, Upload, Map, Zap, TrendingUp, Shield, Sparkles, Workflow, Calculator } from 'lucide-react';
 import StarsBackground from '../components/StarsBackground';
 import Header from '../components/Header';
 import BottomNav from '../components/BottomNav';
@@ -32,6 +32,13 @@ const HomePage: React.FC<HomePageProps> = ({ onNavigate, currentPage }) => {
       title: 'Recyling Centers',
       description: 'Find Recycle Locations',
       onClick: () => onNavigate('recycle'),
+      gradient: 'from-white to-gray-200'
+    },
+    {
+      icon: Calculator,
+      title: 'Carbon Calculator',
+      description: 'Caluclate Carbon',
+      onClick: () => onNavigate('carbon'),
       gradient: 'from-white to-gray-200'
     }
   ];

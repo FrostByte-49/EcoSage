@@ -6,6 +6,7 @@ import AboutPage from './pages/AboutPage';
 import ProfilePage from './pages/ProfilePage';
 import ResultsPage from './pages/ResultsPage';
 import RecyclePage from './pages/RecyclingPage';
+import CarbonCalculator from './pages/CarbonCalculatorPage';
 
 interface AnalysisData {
   result: string;
@@ -13,12 +14,12 @@ interface AnalysisData {
 }
 
 function App() {
-  const [currentPage, setCurrentPage] = useState<'home' | 'scan' | 'upload' | 'about' | 'profile' | 'results' | 'recycle' >(() => {
+  const [currentPage, setCurrentPage] = useState<'home' | 'scan' | 'upload' | 'about' | 'profile' | 'results' | 'recycle' | 'carbon' >(() => {
     // Initialize State From LocalStorage
     if (typeof window !== 'undefined') {
       const savedPage = localStorage.getItem('ecosage-currentPage');
-      if (savedPage && ['home', 'scan', 'upload', 'about', 'profile', 'results' , 'recycle'].includes(savedPage)) {
-        return savedPage as 'home' | 'scan' | 'upload' | 'about' | 'profile' | 'results' | 'recycle';
+      if (savedPage && ['home', 'scan', 'upload', 'about', 'profile', 'results' , 'recycle' , 'carbon'].includes(savedPage)) {
+        return savedPage as 'home' | 'scan' | 'upload' | 'about' | 'profile' | 'results' | 'recycle' | 'carbon';
       }
     }
     return 'home';
@@ -41,7 +42,7 @@ function App() {
   });
 
   const handleNavigate = (page: string) => {
-    const newPage = page as 'home' | 'scan' | 'upload' | 'about' | 'profile' | 'results' | 'recycle';
+    const newPage = page as 'home' | 'scan' | 'upload' | 'about' | 'profile' | 'results' | 'recycle' | 'carbon';
     setCurrentPage(newPage);
     localStorage.setItem('ecosage-currentPage', newPage);
     
@@ -89,6 +90,8 @@ function App() {
       return <ProfilePage {...pageProps} />;
     case 'recycle':
       return <RecyclePage {...pageProps} />;
+    case 'carbon':
+      return <CarbonCalculator {...pageProps} />;
     default:
       return <HomePage {...pageProps} />;
   }
