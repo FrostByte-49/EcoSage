@@ -841,9 +841,9 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ onNavigate, currentPage }) =>
                 {/* About Section */}
                 <div className="bg-gray-900/60 backdrop-blur-lg rounded-2xl border border-gray-800 p-6">
                   <h3 className="text-xl font-bold text-white mb-4">About EcoSage</h3>
-                  <div className="space-y-3 text-sm text-gray-400">
+                  <div className="space-y-3 text-sm text-gray-400 capitalize">
                     <p>Version 1.0.0</p>
-                    <p>Making sustainable choices easier, one scan at a time.</p>
+                    <p>Making sustainable choices easier.</p>
                     <div className="pt-4 border-t border-gray-800">
                       <button
                         onClick={() => onNavigate('about')}

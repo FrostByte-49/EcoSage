@@ -107,7 +107,7 @@ const UploadPage: React.FC<UploadPageProps> = ({ onNavigate, currentPage, onAnal
       <StarsBackground />
       
       <div className="relative z-10 pb-20">
-        <Header title="Upload" />
+        <Header />
         
         <div className="max-w-md mx-auto px-6 py-8">
           {/* Header */}
