@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://ecosage-aa5l.onrender.com/api';
 
 export interface AnalysisResponse {
   success: boolean;

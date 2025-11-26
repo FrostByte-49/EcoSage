@@ -20,7 +20,7 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' })); 
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
-// Routes - FIXED: Changed /Api to /api (lowercase)
+// Routes 
 app.use('/api', analysisRoutes);
 
 // Health check
