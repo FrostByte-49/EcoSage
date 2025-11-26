@@ -42,19 +42,19 @@ Powered by Google Gemini AI, real-time data analytics, and beautiful cosmic desi
 
 | **Home Page** | **Product Scanner** |
 |---------------|---------------------|
-| ![Home Page](EcoSage_\frontend\public\preview\Image_1.webp) | ![Scanner](Ecosage_/frontend/public/preview/Image_2.webp) |
+| ![Home Page](EcoSage_/frontend/public/preview/Image_1.webp) | ![Scanner](EcoSage_/frontend/public/preview/Image_2.webp) |
 
 | **Upload Page** | **Alternative Finder** |
 |----------------------|------------------------|
-| ![Upload Page](Ecosage_/frontend/public/preview/Image_3.webp) | ![Alternatives](Ecosage_/frontend/public/preview/Image_4.webp) |
+| ![Upload Page](EcoSage_/frontend/public/preview/Image_3.webp) | ![Alternatives](EcoSage_/frontend/public/preview/Image_4.webp) |
 
 | **Carbon Calculator** | **Recycling Map** |
 |-----------------------|-------------------|
-| ![Calculator](Ecosage_/frontend/public/preview/Image_5.webp) | ![Recycling](Ecosage_/frontend/public/preview/Image_6.webp) |
+| ![Calculator](EcoSage_/frontend/public/preview/Image_5.webp) | ![Recycling](EcoSage_/frontend/public/preview/Image_6.webp) |
 
 | **About Us** | **Profile** |
 |-----------------------|-------------------------|
-| ![About Us](Ecosage_/frontend/public/preview/Image_7.webp) | ![Profile](Ecosage_/frontend/public/preview/Image_8.webp) |
+| ![About Us](EcoSage_/frontend/public/preview/Image_7.webp) | ![Profile](EcoSage_/frontend/public/preview/Image_8.webp) |
 
 <br>
 
