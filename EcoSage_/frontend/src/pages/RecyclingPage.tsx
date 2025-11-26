@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup, Circle, useMap } from "react-leaflet";
-import L from "leaflet";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { LocateFixed, MapPin, Navigation, RefreshCw, AlertCircle } from "lucide-react";
 
 import "leaflet/dist/leaflet.css";
 import StarsBackground from "../components/StarsBackground";
 import Header from "../components/Header";
 import BottomNav from "../components/BottomNav";
+
+// Import Leaflet types
+import type { Icon as LeafletIcon } from 'leaflet';
+import L from 'leaflet';
 
 interface RecyclingCenter {
   id: number;
@@ -25,7 +28,8 @@ interface Props {
 }
 
 // Fix Leaflet default icon issue
-delete (L.Icon.Default.prototype as any)._getIconUrl;
+const DefaultIcon = L.Icon.Default as unknown as { prototype: { _getIconUrl?: () => void } };
+delete DefaultIcon.prototype._getIconUrl;
 
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
@@ -37,7 +41,7 @@ L.Icon.Default.mergeOptions({
 });
 
 // Custom green marker for recycling centers
-const recycleIcon = new L.Icon({
+const recycleIcon: LeafletIcon = new L.Icon({
   iconUrl: 'data:image/svg+xml;base64,' + btoa(`
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32">
       <circle cx="12" cy="12" r="11" fill="#10b981" stroke="white" stroke-width="2"/>
@@ -64,7 +68,6 @@ const RecyclingMapPage: React.FC<Props> = ({ onNavigate, currentPage }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
   const [searchRadius, setSearchRadius] = useState(5); // km
-  const [selectedCenter, setSelectedCenter] = useState<RecyclingCenter | null>(null);
 
   // Calculate distance between two coordinates
   const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
@@ -129,7 +132,23 @@ const RecyclingMapPage: React.FC<Props> = ({ onNavigate, currentPage }) => {
 
         const data = await response.json();
         
-        const mappedCenters: RecyclingCenter[] = data.elements.map((item: any) => {
+        interface OverpassElement {
+          id: number;
+          lat?: number;
+          lon?: number;
+          center?: { lat: number; lon: number };
+          tags?: {
+            name?: string;
+            operator?: string;
+            recycling_type?: string;
+            amenity?: string;
+            'addr:street'?: string;
+            'addr:housenumber'?: string;
+            'addr:city'?: string;
+          };
+        }
+
+        const mappedCenters: RecyclingCenter[] = data.elements.map((item: OverpassElement) => {
           const itemLat = item.lat || item.center?.lat;
           const itemLon = item.lon || item.center?.lon;
           const distance = calculateDistance(lat, lon, itemLat, itemLon);
@@ -183,20 +202,24 @@ const RecyclingMapPage: React.FC<Props> = ({ onNavigate, currentPage }) => {
       <StarsBackground />
 
       <div className="relative z-10 pb-20">
-        <Header title="Recycling Spots" />
+        <Header />
 
-        <div className="max-w-md mx-auto px-6 mt-6">
+        <div className="max-w-4xl mx-auto px-6 py-8">
           {/* Header */}
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             className="mb-6"
           >
-            <h1 className="text-2xl md:text-3xl font-bold mb-2">
-              Find Recycling Centers Near You
-            </h1>
-            <p className="text-gray-400 text-sm">
-              Discover locations where you can recycle responsibly ♻️
+            <h1 className="text-3xl font-extrabold text-center text-white mt-4 mb-0.5 uppercase">Recycling Centers</h1>
+            {/* Line Animation */}
+            <div className="flex justify-center items-center gap-2 mb-1">
+              <div className="h-0.5 w-20 bg-gradient-to-r from-white/40 to-white/20 rounded-full" />
+              <span className="text-lg text-white font-light">✦</span>
+              <div className="h-0.5 w-20 bg-gradient-to-r from-white/20 to-white/40 rounded-full" />
+            </div>
+            <p className="text-gray-400 text-sm text-center capitalize">
+              Discover locations where you can recycle responsibly
             </p>
           </motion.div>
 
@@ -219,6 +242,7 @@ const RecyclingMapPage: React.FC<Props> = ({ onNavigate, currentPage }) => {
                 <option value={10}>10 km</option>
                 <option value={15}>15 km</option>
                 <option value={20}>20 km</option>
+                <option value={25}>25 km</option>
               </select>
             </div>
 
@@ -240,7 +264,7 @@ const RecyclingMapPage: React.FC<Props> = ({ onNavigate, currentPage }) => {
               className="mb-4 bg-yellow-900/20 border border-yellow-600/50 rounded-xl p-4 flex items-start space-x-3"
             >
               <AlertCircle className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-0.5" />
-              <p className="text-yellow-200 text-sm">{error}</p>
+              <p className="text-yellow-200 text-sm capitalize">{error}</p>
             </motion.div>
           )}
 
@@ -262,7 +286,6 @@ const RecyclingMapPage: React.FC<Props> = ({ onNavigate, currentPage }) => {
               >
                 <TileLayer
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                 />
                 
                 <RecenterMap center={userLocation} />
@@ -294,9 +317,6 @@ const RecyclingMapPage: React.FC<Props> = ({ onNavigate, currentPage }) => {
                     key={center.id}
                     position={[center.lat, center.lon]}
                     icon={recycleIcon}
-                    eventHandlers={{
-                      click: () => setSelectedCenter(center)
-                    }}
                   >
                     <Popup>
                       <div className="text-black min-w-[200px]">
@@ -366,8 +386,7 @@ const RecyclingMapPage: React.FC<Props> = ({ onNavigate, currentPage }) => {
                 {centers.slice(0, 10).map((center) => (
                   <div
                     key={center.id}
-                    className="p-4 bg-gray-800/50 rounded-xl hover:bg-gray-800 transition-colors cursor-pointer border border-gray-700"
-                    onClick={() => setSelectedCenter(center)}
+                    className="p-4 bg-gray-800/50 rounded-xl hover:bg-gray-800 transition-colors border border-gray-700"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
