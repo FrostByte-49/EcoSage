@@ -4,6 +4,7 @@ import { Upload, Image as ImageIcon, Zap, RotateCcw, Info, X } from 'lucide-reac
 import StarsBackground from '../components/StarsBackground';
 import Header from '../components/Header';
 import BottomNav from '../components/BottomNav';
+import { compressImage } from '../services/ImageCompression';
 import { analyzeProduct } from '../services/api';
 import { addToScanHistory } from '../services/ScanHistory';
 
@@ -78,7 +79,9 @@ const UploadPage: React.FC<UploadPageProps> = ({ onNavigate, currentPage, onAnal
     try {
       console.log('📤 Sending uploaded image to API for analysis...');
       
-      const result = await analyzeProduct(uploadedImage);
+      const compressedImage = await compressImage(uploadedImage);
+      const result = await analyzeProduct(compressedImage);
+
       
       if (result.success && result.analysis) {
         console.log('✅ Analysis successful');

@@ -7,6 +7,34 @@ import BottomNav from '../components/BottomNav';
 import { analyzeProduct } from '../services/api';
 import { addToScanHistory } from '../services/ScanHistory';
 
+const compressImage = (
+  canvas: HTMLCanvasElement,
+  maxSize = 512,
+  quality = 0.7
+): string => {
+  const { width, height } = canvas;
+
+  let newWidth = width;
+  let newHeight = height;
+
+  if (width > height && width > maxSize) {
+    newWidth = maxSize;
+    newHeight = Math.round((height * maxSize) / width);
+  } else if (height > maxSize) {
+    newHeight = maxSize;
+    newWidth = Math.round((width * maxSize) / height);
+  }
+
+  const resizedCanvas = document.createElement("canvas");
+  resizedCanvas.width = newWidth;
+  resizedCanvas.height = newHeight;
+
+  const resizedCtx = resizedCanvas.getContext("2d")!;
+  resizedCtx.drawImage(canvas, 0, 0, newWidth, newHeight);
+
+  return resizedCanvas.toDataURL("image/jpeg", quality);
+};
+
 interface ScanPageProps {
   onNavigate: (page: string) => void;
   currentPage: string;
@@ -171,8 +199,8 @@ const ScanPage: React.FC<ScanPageProps> = ({ onNavigate, currentPage, onAnalysis
 
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       
-      const imageData = canvas.toDataURL('image/jpeg', 0.95);
-      setCapturedImage(imageData);
+      const compressedImage = compressImage(canvas, 512, 0.7);
+      setCapturedImage(compressedImage);
       
       if (streamRef.current) {
         streamRef.current.getTracks().forEach(track => track.stop());
