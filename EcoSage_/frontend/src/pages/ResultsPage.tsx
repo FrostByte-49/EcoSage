@@ -21,8 +21,6 @@ import {
 import StarsBackground from '../components/StarsBackground';
 import Header from '../components/Header';
 import BottomNav from '../components/BottomNav';
-import { AnalysisSchema } from '../services/AnalysisParser';
-import type { AnalysisData } from '../services/AnalysisParser';
 
 interface ResultsPageProps {
   onNavigate: (page: string) => void;
@@ -31,21 +29,33 @@ interface ResultsPageProps {
   capturedImage: string;
 }
 
-// Helper function to get emoji from score
-const getScoreEmoji = (score: number): string => {
-  if (score >= 8) return '🌱';
-  if (score >= 6) return '👍';
-  if (score >= 4) return '⚠️';
-  return '❌';
-};
-
-// Helper to format score description
-const getScoreDescription = (score: number): string => {
-  if (score >= 8) return 'Excellent';
-  if (score >= 6) return 'Good';
-  if (score >= 4) return 'Fair';
-  return 'Poor';
-};
+interface ParsedAnalysis {
+  productName: string;
+  brand: string;
+  category: string;
+  score: number;
+  scoreEmoji: string;
+  scoreDescription: string;
+  packagingScore: string;
+  productionScore: string;
+  companyScore: string;
+  lifecycleScore: string;
+  alternatives: Array<{
+    name: string;
+    brand: string;
+    reason: string;
+    price: string;
+    availability: string;
+  }>;
+  pros: string[];
+  cons: string[];
+  verdict: string;
+  tips: {
+    disposal: string[];
+    reduce: string[];
+    choices: string[];
+  };
+}
 
 const ResultsPage: React.FC<ResultsPageProps> = ({
   onNavigate,
@@ -58,14 +68,319 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
   );
 
   // Parse analysis using useMemo to avoid re-parsing on every render
-  const parsedData = useMemo<AnalysisData | null>(() => {
-    try {
-      return AnalysisSchema.parse(analysisResult);
-    } catch (err) {
-      console.error('Invalid analysis format', err);
-      return null;
+  // Parse analysis using useMemo to avoid re-parsing on every render
+const parsedData = useMemo(() => {
+  try {
+    console.log('Raw analysis text:', analysisResult); // Debug
+
+    // Extract product name
+    const nameMatch = analysisResult.match(/Product Name:\s*(.+?)(?:\n|$)/i);
+    const productName = nameMatch ? nameMatch[1].trim() : 'Product';
+
+    // Extract brand
+    const brandMatch = analysisResult.match(/Brand:\s*(.+?)(?:\n|$)/i);
+    const brand = brandMatch ? brandMatch[1].trim() : 'Unknown';
+
+    // Extract category
+    const categoryMatch = analysisResult.match(/Category:\s*(.+?)(?:\n|$)/i);
+    const category = categoryMatch ? categoryMatch[1].trim() : 'General';
+
+    // Extract score
+    const scoreMatch = analysisResult.match(/SUSTAINABILITY SCORE:\s*(\d+)\/10/i);
+    const score = scoreMatch ? parseInt(scoreMatch[1]) : 5;
+
+    // Get score emoji and description
+    let scoreEmoji = '⚖️';
+    let scoreDescription = 'Average';
+    if (score >= 9) {
+      scoreEmoji = '🌟';
+      scoreDescription = 'Excellent';
+    } else if (score >= 7) {
+      scoreEmoji = '🌿';
+      scoreDescription = 'Very Good';
+    } else if (score >= 5) {
+      scoreEmoji = '⚖️';
+      scoreDescription = 'Average';
+    } else if (score >= 3) {
+      scoreEmoji = '⚠️';
+      scoreDescription = 'Below Average';
+    } else {
+      scoreEmoji = '🚨';
+      scoreDescription = 'Poor';
     }
-  }, [analysisResult]);
+
+    // Extract score breakdown - match the exact format from prompt
+    const scoreDetailsSection = analysisResult.match(/Score Details:([\s\S]*?)(?:PROS|CONS|ALTERNATIVES)/i);
+    let packagingScore = 'N/A';
+    let productionScore = 'N/A';
+    let companyScore = 'N/A';
+    let lifecycleScore = 'N/A';
+
+    if (scoreDetailsSection) {
+      const breakdownText = scoreDetailsSection[1];
+      const packagingMatch = breakdownText.match(/• Packaging:\s*(\d+)\/3\s*-\s*([^\n]+)/i);
+      const productionMatch = breakdownText.match(/• Production:\s*(\d+)\/3\s*-\s*([^\n]+)/i);
+      const companyMatch = breakdownText.match(/• Company Ethics:\s*(\d+)\/2\s*-\s*([^\n]+)/i);
+      const lifecycleMatch = breakdownText.match(/• Lifecycle Impact:\s*(\d+)\/2\s*-\s*([^\n]+)/i);
+
+      packagingScore = packagingMatch ? `${packagingMatch[1]}/3 - ${packagingMatch[2].trim()}` : 'N/A';
+      productionScore = productionMatch ? `${productionMatch[1]}/3 - ${productionMatch[2].trim()}` : 'N/A';
+      companyScore = companyMatch ? `${companyMatch[1]}/2 - ${companyMatch[2].trim()}` : 'N/A';
+      lifecycleScore = lifecycleMatch ? `${lifecycleMatch[1]}/2 - ${lifecycleMatch[2].trim()}` : 'N/A';
+    }
+
+    // Extract pros - simple bullet point parsing
+    const pros: string[] = [];
+    const prosSection = analysisResult.match(/PROS\s*\n([\s\S]*?)(?:CONS|ALTERNATIVES|ACTION TIPS)/i);
+    if (prosSection) {
+      const prosText = prosSection[1];
+      const proMatches = prosText.matchAll(/•\s*([^\n]+)/g);
+      for (const match of proMatches) {
+        pros.push(match[1].trim());
+      }
+    }
+
+    // Extract cons - simple bullet point parsing
+    const cons: string[] = [];
+    const consSection = analysisResult.match(/CONS\s*\n([\s\S]*?)(?:PROS|ALTERNATIVES|ACTION TIPS)/i);
+    if (consSection) {
+      const consText = consSection[1];
+      const conMatches = consText.matchAll(/•\s*([^\n]+)/g);
+      for (const match of conMatches) {
+        cons.push(match[1].trim());
+      }
+    }
+
+    console.log('Pros:', pros, 'Cons:', cons); // Debug
+
+    // Extract alternatives - IMPROVED PARSING for continuous text
+const alternatives: ParsedAnalysis['alternatives'] = [];
+const altSection = analysisResult.match(/ALTERNATIVES\s*\n([\s\S]*?)(?:ACTION TIPS|VERDICT)/i);
+
+if (altSection) {
+  const altText = altSection[1];
+  console.log('Alternatives raw text:', altText); // Debug
+  
+  // Method 1: Try parsing with flexible regex that handles continuous text
+  const altRegex = /(\d+)\.\s*([^\n]+?)\s*Brand:\s*([^\n]+?)\s*Why better:\s*([^\n]+?)\s*Price:\s*([^\n]+?)\s*Where:\s*([^\n]+?)(?=\d+\.|ACTION TIPS|VERDICT|$)/gi;
+  
+  let match;
+  while ((match = altRegex.exec(altText)) !== null) {
+    console.log('Found alternative (Method 1):', match);
+    alternatives.push({
+      name: match[2].trim(),
+      brand: match[3].trim(),
+      reason: match[4].trim(),
+      price: match[5].trim(),
+      availability: match[6].trim()
+    });
+  }
+  
+  // Method 2: If no matches, try with normalized spacing
+  if (alternatives.length === 0) {
+    const normalizedText = altText.replace(/\s+/g, ' ').trim();
+    console.log('Normalized alternatives text:', normalizedText);
+    
+    const altRegex2 = /(\d+)\.\s*([^B]+?)\s*Brand:\s*([^W]+?)\s*Why better:\s*([^P]+?)\s*Price:\s*([^W]+?)\s*Where:\s*([^\d]+?)(?=\d+\.|$)/gi;
+    
+    let match2;
+    while ((match2 = altRegex2.exec(normalizedText)) !== null) {
+      console.log('Found alternative (Method 2):', match2);
+      alternatives.push({
+        name: match2[2].trim(),
+        brand: match2[3].trim(),
+        reason: match2[4].trim(),
+        price: match2[5].trim(),
+        availability: match2[6].trim()
+      });
+    }
+  }
+  
+  // Method 3: Line-by-line parsing as fallback
+  if (alternatives.length === 0) {
+    console.log('Trying line-by-line parsing...');
+    const lines = altText.split('\n').filter(line => line.trim());
+    let currentAlt: any = null;
+    let fieldOrder: string[] = [];
+    
+    for (const line of lines) {
+      const trimmed = line.trim();
+      
+      // Start new alternative
+      if (/^\d+\./.test(trimmed)) {
+        if (currentAlt && currentAlt.name) {
+          alternatives.push(currentAlt);
+        }
+        currentAlt = { 
+          name: trimmed.replace(/^\d+\.\s*/, '').trim() 
+        };
+        fieldOrder = ['name'];
+      }
+      // Brand field
+      else if (trimmed.toLowerCase().startsWith('brand:')) {
+        if (currentAlt) {
+          currentAlt.brand = trimmed.replace(/Brand:\s*/i, '').trim();
+          fieldOrder.push('brand');
+        }
+      }
+      // Why better field
+      else if (trimmed.toLowerCase().startsWith('why better:')) {
+        if (currentAlt) {
+          currentAlt.reason = trimmed.replace(/Why better:\s*/i, '').trim();
+          fieldOrder.push('reason');
+        }
+      }
+      // Price field
+      else if (trimmed.toLowerCase().startsWith('price:')) {
+        if (currentAlt) {
+          currentAlt.price = trimmed.replace(/Price:\s*/i, '').trim();
+          fieldOrder.push('price');
+        }
+      }
+      // Where field
+      else if (trimmed.toLowerCase().startsWith('where:')) {
+        if (currentAlt) {
+          currentAlt.availability = trimmed.replace(/Where:\s*/i, '').trim();
+          fieldOrder.push('availability');
+        }
+      }
+      // If line doesn't start with a field marker, it might be continuation of previous field
+      else if (currentAlt && fieldOrder.length > 0) {
+        const lastField = fieldOrder[fieldOrder.length - 1];
+        if (lastField && currentAlt[lastField]) {
+          currentAlt[lastField] += ' ' + trimmed;
+        }
+      }
+    }
+    
+    // Don't forget the last alternative
+    if (currentAlt && currentAlt.name && currentAlt.brand) {
+      alternatives.push(currentAlt);
+    }
+  }
+  
+  // Method 4: Last resort - split by numbered items and parse each block
+  if (alternatives.length === 0) {
+    console.log('Trying block parsing...');
+    const altBlocks = altText.split(/(?=\d+\.)/).filter(block => block.trim());
+    
+    for (const block of altBlocks) {
+      try {
+        const nameMatch = block.match(/^\d+\.\s*([^\n]+)/);
+        const brandMatch = block.match(/Brand:\s*([^\n]+)/i);
+        const reasonMatch = block.match(/Why better:\s*([^\n]+)/i);
+        const priceMatch = block.match(/Price:\s*([^\n]+)/i);
+        const availabilityMatch = block.match(/Where:\s*([^\n]+)/i);
+        
+        if (nameMatch && brandMatch && reasonMatch && priceMatch && availabilityMatch) {
+          alternatives.push({
+            name: nameMatch[1].trim(),
+            brand: brandMatch[1].trim(),
+            reason: reasonMatch[1].trim(),
+            price: priceMatch[1].trim(),
+            availability: availabilityMatch[1].trim()
+          });
+        }
+      } catch (error) {
+        console.log('Error parsing block:', error);
+      }
+    }
+  }
+}
+
+console.log('Final alternatives found:', alternatives);
+
+    // Extract tips - FIXED PARSING
+    const tipsSection = analysisResult.match(/ACTION TIPS\s*\n([\s\S]*?)(?:VERDICT|$)/i);
+    const disposal: string[] = [];
+    const reduce: string[] = [];
+    const choices: string[] = [];
+
+    if (tipsSection) {
+      const tipsText = tipsSection[1];
+      console.log('Tips raw text:', tipsText); // Debug
+
+      // Recycling tips - more flexible parsing
+      const recyclingMatch = tipsText.match(/Recycling:([\s\S]*?)(?:Reduce Impact|Better Choices|VERDICT|$)/i);
+      if (recyclingMatch) {
+        const recyclingText = recyclingMatch[1];
+        const recyclingTips = recyclingText.matchAll(/•\s*([^\n•]+)/g);
+        for (const match of recyclingTips) {
+          if (match[1].trim()) disposal.push(match[1].trim());
+        }
+      }
+
+      // Reduce Impact tips - more flexible parsing
+      const reduceMatch = tipsText.match(/Reduce Impact:([\s\S]*?)(?:Better Choices|Recycling|VERDICT|$)/i);
+      if (reduceMatch) {
+        const reduceText = reduceMatch[1];
+        const reduceTips = reduceText.matchAll(/•\s*([^\n•]+)/g);
+        for (const match of reduceTips) {
+          if (match[1].trim()) reduce.push(match[1].trim());
+        }
+      }
+
+      // Better Choices tips - more flexible parsing
+      const choicesMatch = tipsText.match(/Better Choices:([\s\S]*?)(?:Recycling|Reduce Impact|VERDICT|$)/i);
+      if (choicesMatch) {
+        const choicesText = choicesMatch[1];
+        const choicesTips = choicesText.matchAll(/•\s*([^\n•]+)/g);
+        for (const match of choicesTips) {
+          if (match[1].trim()) choices.push(match[1].trim());
+        }
+      }
+
+      // Alternative parsing if the above doesn't work
+      if (disposal.length === 0 && reduce.length === 0 && choices.length === 0) {
+        const lines = tipsText.split('\n');
+        let currentSection = '';
+        
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (trimmed.toLowerCase().includes('recycling:')) {
+            currentSection = 'recycling';
+          } else if (trimmed.toLowerCase().includes('reduce impact:')) {
+            currentSection = 'reduce';
+          } else if (trimmed.toLowerCase().includes('better choices:')) {
+            currentSection = 'choices';
+          } else if (trimmed.startsWith('•') && currentSection) {
+            const tip = trimmed.replace('•', '').trim();
+            if (currentSection === 'recycling' && tip) disposal.push(tip);
+            else if (currentSection === 'reduce' && tip) reduce.push(tip);
+            else if (currentSection === 'choices' && tip) choices.push(tip);
+          }
+        }
+      }
+    }
+
+    console.log('Tips:', { disposal, reduce, choices }); // Debug
+
+    // Extract verdict
+    const verdictMatch = analysisResult.match(/VERDICT\s*\n([^\n]+)/i);
+    const verdict = verdictMatch ? verdictMatch[1].trim() : '';
+
+    return {
+      productName,
+      brand,
+      category,
+      score,
+      scoreEmoji,
+      scoreDescription,
+      packagingScore,
+      productionScore,
+      companyScore,
+      lifecycleScore,
+      alternatives,
+      pros,
+      cons,
+      verdict,
+      tips: { disposal, reduce, choices }
+    };
+  } catch (error) {
+    console.error('Error parsing analysis:', error);
+    return null;
+  }
+}, [analysisResult]);
 
   const toggleSection = (section: string) => {
     setExpandedSections(prev => {
@@ -80,10 +395,10 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
   };
 
   const handleShare = () => {
-    if (navigator.share && parsedData) {
+    if (navigator.share) {
       navigator.share({
-        title: `${parsedData.product.name} - Sustainability Analysis`,
-        text: `Sustainability Score: ${parsedData.score.total}/10 - ${parsedData.verdict}`,
+        title: `${parsedData?.productName} - Sustainability Analysis`,
+        text: `Sustainability Score: ${parsedData?.score}/10 - ${parsedData?.verdict}`,
       }).catch(console.error);
     }
   };
@@ -92,7 +407,7 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
     const element = document.createElement('a');
     const file = new Blob([analysisResult], { type: 'text/plain' });
     element.href = URL.createObjectURL(file);
-    element.download = `${parsedData?.product.name || 'product'}-analysis-${Date.now()}.txt`;
+    element.download = `${parsedData?.productName || 'product'}-analysis-${Date.now()}.txt`;
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
@@ -115,11 +430,6 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
       </div>
     );
   }
-
-  // Extract values for easier access
-  const scoreEmoji = getScoreEmoji(parsedData.score.total);
-  const scoreDescription = getScoreDescription(parsedData.score.total);
-  const formattedScore = Math.round(parsedData.score.total * 10) / 10;
 
   return (
     <div className="min-h-screen relative text-white overflow-hidden bg-black">
@@ -168,7 +478,7 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
               <div className="w-full md:w-48 h-48 flex-shrink-0">
                 <img
                   src={capturedImage}
-                  alt={parsedData.product.name}
+                  alt={parsedData.productName}
                   className="w-full h-full object-contain rounded-2xl bg-black/20"
                 />
               </div>
@@ -178,14 +488,14 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
                 <div className="flex items-start justify-between mb-4">
                   <div>
                     <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
-                      {parsedData.product.name}
+                      {parsedData.productName}
                     </h1>
                     <div className="flex flex-wrap items-center gap-2 text-sm">
                       <span className="px-3 py-1 bg-gray-800 rounded-full text-gray-300">
-                        {parsedData.product.brand}
+                        {parsedData.brand}
                       </span>
                       <span className="px-3 py-1 bg-gray-800 rounded-full text-gray-300">
-                        {parsedData.product.category}
+                        {parsedData.category}
                       </span>
                     </div>
                   </div>
@@ -196,19 +506,19 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
                 <div className="mt-6">
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-sm text-gray-400">Sustainability Score</span>
-                    <span className="text-sm text-gray-400">{scoreDescription}</span>
+                    <span className="text-sm text-gray-400">{parsedData.scoreDescription}</span>
                   </div>
                   <div className="relative h-4 bg-gray-800 rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
-                      animate={{ width: `${(parsedData.score.total / 10) * 100}%` }}
+                      animate={{ width: `${parsedData.score * 10}%` }}
                       transition={{ duration: 1, ease: "easeOut" }}
-                      className={`h-full bg-gradient-to-r ${getScoreColor(formattedScore)}`}
+                      className={`h-full bg-gradient-to-r ${getScoreColor(parsedData.score)}`}
                     />
                   </div>
                   <div className="flex items-center justify-between mt-2">
-                    <span className="text-3xl font-bold">{parsedData.score.total}/10</span>
-                    <span className="text-4xl">{scoreEmoji}</span>
+                    <span className="text-3xl font-bold">{parsedData.score}/10</span>
+                    <span className="text-4xl">{parsedData.scoreEmoji}</span>
                   </div>
                 </div>
               </div>
@@ -243,41 +553,16 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
                 >
                   <div className="p-6 grid md:grid-cols-2 gap-4">
                     {[
-                      { 
-                        label: 'Packaging', 
-                        value: parsedData.score.breakdown.packaging.score, 
-                        reason: parsedData.score.breakdown.packaging.reason,
-                        icon: Package, 
-                        color: 'text-green-400' 
-                      },
-                      { 
-                        label: 'Production', 
-                        value: parsedData.score.breakdown.production.score, 
-                        reason: parsedData.score.breakdown.production.reason,
-                        icon: Factory, 
-                        color: 'text-blue-400' 
-                      },
-                      { 
-                        label: 'Company Ethics', 
-                        value: parsedData.score.breakdown.ethics.score, 
-                        reason: parsedData.score.breakdown.ethics.reason,
-                        icon: CheckCircle, 
-                        color: 'text-purple-400' 
-                      },
-                      { 
-                        label: 'Lifecycle', 
-                        value: parsedData.score.breakdown.lifecycle.score, 
-                        reason: parsedData.score.breakdown.lifecycle.reason,
-                        icon: Recycle, 
-                        color: 'text-yellow-400' 
-                      }
+                      { label: 'Packaging', value: parsedData.packagingScore, icon: Package, color: 'text-green-400' },
+                      { label: 'Production', value: parsedData.productionScore, icon: Factory, color: 'text-blue-400' },
+                      { label: 'Company Ethics', value: parsedData.companyScore, icon: CheckCircle, color: 'text-purple-400' },
+                      { label: 'Lifecycle', value: parsedData.lifecycleScore, icon: Recycle, color: 'text-yellow-400' }
                     ].map((item, i) => (
                       <div key={i} className="flex items-start space-x-3 p-4 bg-gray-800/30 rounded-xl">
                         <item.icon className={`w-5 h-5 ${item.color} flex-shrink-0 mt-0.5`} />
                         <div className="flex-1 min-w-0">
                           <div className="text-sm text-gray-400 mb-1">{item.label}</div>
-                          <div className="text-white font-semibold text-sm mb-1">{item.value}/10</div>
-                          <div className="text-gray-400 text-xs leading-relaxed">{item.reason}</div>
+                          <div className="text-white font-semibold text-sm leading-relaxed">{item.value}</div>
                         </div>
                       </div>
                     ))}
@@ -323,7 +608,7 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
                             <h3 className="text-lg font-bold">Pros</h3>
                           </div>
                           <ul className="space-y-2">
-                            {parsedData.pros.map((pro: string, i: number) => (
+                            {parsedData.pros.map((pro, i) => (
                               <motion.li
                                 key={i}
                                 initial={{ opacity: 0, x: -20 }}
@@ -347,7 +632,7 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
                             <h3 className="text-lg font-bold">Cons</h3>
                           </div>
                           <ul className="space-y-2">
-                            {parsedData.cons.map((con: string, i: number) => (
+                            {parsedData.cons.map((con, i) => (
                               <motion.li
                                 key={i}
                                 initial={{ opacity: 0, x: 20 }}
@@ -431,7 +716,7 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
           )}
 
           {/* Action Tips */}
-          {(parsedData.tips.recycling.length > 0 || parsedData.tips.reduce.length > 0 || parsedData.tips.choices.length > 0) && (
+          {(parsedData.tips.disposal.length > 0 || parsedData.tips.reduce.length > 0 || parsedData.tips.choices.length > 0) && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -458,15 +743,14 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
                     className="border-t border-gray-800"
                   >
                     <div className="p-6 space-y-6">
-                      {/* Recycling Tips */}
-                      {parsedData.tips.recycling.length > 0 && (
+                      {parsedData.tips.disposal.length > 0 && (
                         <div>
                           <h4 className="flex items-center space-x-2 text-sm font-bold text-gray-300 mb-3">
                             <Recycle className="w-4 h-4" />
                             <span>Recycling</span>
                           </h4>
                           <ul className="space-y-2">
-                            {parsedData.tips.recycling.map((tip: string, i: number) => (
+                            {parsedData.tips.disposal.map((tip, i) => (
                               <li key={i} className="flex items-start space-x-2 text-sm text-gray-400">
                                 <span className="text-green-400 mt-0.5">•</span>
                                 <span>{tip}</span>
@@ -476,7 +760,6 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
                         </div>
                       )}
 
-                      {/* Reduce Impact Tips */}
                       {parsedData.tips.reduce.length > 0 && (
                         <div>
                           <h4 className="flex items-center space-x-2 text-sm font-bold text-gray-300 mb-3">
@@ -484,7 +767,7 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
                             <span>Reduce Impact</span>
                           </h4>
                           <ul className="space-y-2">
-                            {parsedData.tips.reduce.map((tip: string, i: number) => (
+                            {parsedData.tips.reduce.map((tip, i) => (
                               <li key={i} className="flex items-start space-x-2 text-sm text-gray-400">
                                 <span className="text-blue-400 mt-0.5">•</span>
                                 <span>{tip}</span>
@@ -494,7 +777,6 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
                         </div>
                       )}
 
-                      {/* Better Choices Tips */}
                       {parsedData.tips.choices.length > 0 && (
                         <div>
                           <h4 className="flex items-center space-x-2 text-sm font-bold text-gray-300 mb-3">
@@ -502,7 +784,7 @@ const ResultsPage: React.FC<ResultsPageProps> = ({
                             <span>Better Choices</span>
                           </h4>
                           <ul className="space-y-2">
-                            {parsedData.tips.choices.map((tip: string, i: number) => (
+                            {parsedData.tips.choices.map((tip, i) => (
                               <li key={i} className="flex items-start space-x-2 text-sm text-gray-400">
                                 <span className="text-purple-400 mt-0.5">•</span>
                                 <span>{tip}</span>
